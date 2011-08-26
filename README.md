@@ -1,4 +1,4 @@
-This is the repo of Socket to the Man!
+This is the repo of Socket to the Man! 
 
 #Members
 Jeremy Flores
