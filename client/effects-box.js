@@ -42,13 +42,14 @@ function EffectsData(ownerId) {
 		return indices;
 	};
 
-	this.receiveDrop = function(values, ind) {
+	this.receiveDrop = function(ind, values) {
+		var shouldUpdate = false;
+		if (that.currentIndex <= ind*that.unitsPerNote*that.notesPerBox &&
+			that.currentIndex >= (ind+1)*that.unitsPerNote*that.notesPerBox) {
+			shouldUpdate = true;
+		}
 		for (var i=0; i<values.length; i++) {
-			var shouldUpdate = false;
-			if (that.currentIndex == ind) {
-				shouldUpdate = true;
-			}
-			that.setVal(values[i], i+ind, shouldUpdate);
+			that.setVal(i+ind*that.unitsPerNote*that.notesPerBox, values[i], shouldUpdate);
 		}
 	};
 }
@@ -65,7 +66,7 @@ EffectsData.prototype.updateUI = function(ind) {
 // val: value to be set
 // ind: index of the value to be set
 // shouldUpdate: whether or not the UI should receive an update notification
-EffectsData.prototype.setVal = function(val, ind, shouldUpdate) {
+EffectsData.prototype.setVal = function(ind, val, shouldUpdate) {
 	this.values[ind] = val;
 	if (shouldUpdate == true) {
 		this.updateUI(ind);

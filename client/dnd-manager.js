@@ -1,4 +1,4 @@
-function rectIntersect(rect1, rect2) {
+function rectIntersect(rect1, rect2) {	/* from cocosCairo */
 		var left1 = rect1.xpos;
 		var top1 = rect1.ypos;
 		var right1 = rect1.xpos+rect1.width;
@@ -28,9 +28,6 @@ function BoxDNDManager() {
 	this.dragBox = undefined;
 	this.ghost = undefined;
 	this.ghostBBoxes = [];
-	
-
-	
 
 	this.dragStart = function(box) {
 		if (typeof that.dragBox !== 'undefined') {
@@ -70,7 +67,6 @@ function BoxDNDManager() {
 			if (destBox == that.dragBox) {
 				continue;
 			}
-			console.log(destBox.data.ownerId);
 			if (rectIntersect({xpos: xloc, ypos: yloc, width: that.dragBox.width, height: that.dragBox.height},
 				{xpos: destBox.xpos, ypos: destBox.ypos, width: destBox.width, height: destBox.height})) {
 				if (typeof that.destination === 'undefined') {
@@ -92,7 +88,7 @@ function BoxDNDManager() {
 
 		if (typeof that.destination !== 'undefined') {
 			var srcData = that.dragBox.data.getValues(that.dragBox.ind);
-			that.destination.data.receiveDrop(srcData, that.dragBox.ind);
+			that.destination.data.receiveDrop(that.dragBox.ind, srcData);
 			that.destMouseLeave(that.destination, null);
 		}
 
