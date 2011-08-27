@@ -4,6 +4,8 @@
 
 // there is one EffectsData model per user, which keeps track of the effects values
 function EffectsData(ownerId) {
+	var that = this;
+
 	this.unitsPerNote = 8;
 	this.notesPerBox = 4;
 	this.numBoxes = 8;
@@ -19,7 +21,30 @@ function EffectsData(ownerId) {
 		this.values[i] = [0.5, 0.5];
 	}
 
-//	this.get
+	this.getValues = function(boxInd) {
+		if (boxInd < 0 || boxInd >= this.numBoxes) {
+			return [];
+		}
+		var indices = [];
+
+		var begin = boxInd*that.unitsPerNote*that.notesPerBox;
+		var end = begin + that.unitsPerNote*that.notesPerBox;
+		for (var i=begin; i<end; i++) {
+			indices[i-begin] = that.values[i];
+		}
+
+		return indices;
+	};
+
+	this.receiveDrop = function(values, ind) {
+		for (var i=0; i<values.length; i++) {
+			var shouldUpdate = false;
+			if (that.currentIndex == ind) {
+				shouldUpdate = true;
+			}
+			that.data.setVal(values[i], i+ind, shouldUpdate);
+		}
+	};
 }
 
 EffectsData.prototype = new EventEmitter();
@@ -77,12 +102,14 @@ function EffectsBox(x, y, width, height, ind, data) {
 		fill: '90-#4477BB-#5588FF',
 		stroke: '#999999'
 	};
-	this.mainBox.attr(mainBoxAttr);
+	this.mainBox.attr(this.mainBoxAttr);
 
-	this.effectsPoint = paper.rect(this.xpos/2 - 5, this.ypos/2 - 5, 10, 10, 1);
+	this.effectsPoint = paper.rect(this.xpos + this.width/2 - 5, this.ypos + this.height/2 - 5, 10, 10, 1);
 
 	// box which handles all mouse events
 	var eventBox = paper.rect(this.xpos, this.ypos, this.width, this.height);
+	eventBox.attr({fill: '#000000', 'fill-opacity': 0.01});
+
 	eventBox.drag(	effectsBoxDNDManager.dragStart.bind(effectsBoxDNDManager, this),
 					effectsBoxDNDManager.dragMove.bind(effectsBoxDNDManager, this),
 					effectsBoxDNDManager.dragUp.bind(effectsBoxDNDManager, this));
@@ -96,18 +123,9 @@ function EffectsBox(x, y, width, height, ind, data) {
 
 	this.enterDrop = function() {
 		that.mainBox.attr({stroke: "#00ff00"});
-	}
+	};
 
 	this.leaveDrop = function() {
-		that.mainBox.attr(mainBoxAttr);
-	}
-
-	this.receiveDrop = function(box) {
-		var srcData = box.data;
-		//var srcDataBegin = box.ind*
-
-		var destData = that.data;
-
-		
-	}
+		that.mainBox.attr(that.mainBoxAttr);
+	};
 }
