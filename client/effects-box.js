@@ -137,16 +137,18 @@ function EffectsBox(x, y, width, height, ind, data) {
 
 	this.mainBox = paper.rect(this.xpos, this.ypos, this.width, this.height, 10);
 	this.mainBoxAttr = {
-		fill: '90-#4070B0-#4477BB',
-		stroke: '#777777'
+		fill: '90-#a500a7-#e752c6',
+		stroke: '#ece415',
+		'stroke-width': 2
 		};
 	this.mainBoxAttrHighlight = {
-		fill: '90-#4477BB-#5588FF'
+		fill: '90-#b51ab7-#e78fd3',
+		'stroke-width': 2
 	};
 	this.mainBox.attr(this.mainBoxAttr);
 
 	this.effectsPoint = paper.rect(this.xpos + 0.5*(this.width-16) + 5, this.ypos + 0.5*(this.width-16) + 5, 10, 10, 5);
-	this.effectsPoint.attr({fill: '#ffffff', stroke: '#ffffff'});
+	this.effectsPoint.attr({fill: '90-#ece415-#fbff93', stroke: '#000000'});
 
 	// box which handles all mouse events
 	var eventBox = paper.rect(this.xpos, this.ypos, this.width, this.height);
@@ -173,7 +175,7 @@ function EffectsBox(x, y, width, height, ind, data) {
 	});
 
 	this.enterDrop = function() {
-		that.mainBox.attr({stroke: "#00ff00"});
+		that.mainBox.attr({stroke: "#ffffff", 'stroke-width': 4});
 	};
 
 	this.leaveDrop = function() {

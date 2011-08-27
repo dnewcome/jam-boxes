@@ -8,10 +8,10 @@ notesBoxRegistry = new NotesBoxRegistry();
 
 var NotesBox = (function() {
   var NOTES = 10;
-  var SELECTED_COLOR = '#000';
+  var SELECTED_COLOR = '90-#66ddf3-#15bfde';
   var CLEAR_COLOR = '#fff';
-  var NORMAL_STROKE = '#777';
-  var DROPPABLE_STROKE = '#00ff00';
+  var NORMAL_STROKE = '#15bfde';
+  var DROPPABLE_STROKE = '#ffffff';
   var ZOOM_FACTOR = 3;
 
   function createOuter() {
@@ -19,8 +19,9 @@ var NotesBox = (function() {
         paper = me.paper,
         outer = me.outer = paper.rect(me.xpos, me.ypos, me.width, me.height,
       10).attr({
-      fill: '#fff',
-      stroke: NORMAL_STROKE
+      fill: '90-#e128d9-#e63d91',
+      stroke: NORMAL_STROKE,
+      'stroke-width': 2
     });
 
     $(outer.node).bind('click', me.onOuterClick.bind(me));
@@ -40,6 +41,7 @@ var NotesBox = (function() {
     var BEAT_WIDTH = me.innerWidth / me.notesPerMeasure;
     var NOTE_HEIGHT = me.innerHeight / NOTES;
 
+	inner.attr({stroke: '#fff', 'stroke-width': 2, opacity: 0.75});
     me.trackEl(inner);
     for (var i=0; i < me.notesPerMeasure; ++i) {
       // this is the offset into the model
@@ -48,10 +50,8 @@ var NotesBox = (function() {
       for (var j=0; j < NOTES; ++j) {
         var x = innerStartX + i * BEAT_WIDTH,
             y = innerStartY + j * NOTE_HEIGHT,
-            note = paper.rect(x, y, BEAT_WIDTH, NOTE_HEIGHT).attr({
-              fill: CLEAR_COLOR,
-              stroke: "none"
-            });
+            note = paper.rect(x, y, BEAT_WIDTH, NOTE_HEIGHT);
+            me.updateNoteDisplay(note, false);
 
         var node = note.node;
         // We pass the dataI and j so that we can set the model
@@ -141,15 +141,23 @@ var NotesBox = (function() {
 		  this.outer.attr({stroke: NORMAL_STROKE});
     },
 
+    updateNoteDisplay: function(note, selected) {
+      note.attr({
+        stroke: selected ? '#000000' : 'none',
+        /*'stroke-opacity': 0.5,*/
+        fill: selected ? SELECTED_COLOR : CLEAR_COLOR,
+        'fill-opacity': selected ? 1.0 : 0.001
+      });
+    },
+
     onModelUpdate: function(index, value) {
       var me=this,
           noteBoxes = me.noteBoxes[index];
 
       if (noteBoxes) {
         noteBoxes.forEach(function(note, j) {
-          note.attr({
-            fill: value === j ? SELECTED_COLOR : CLEAR_COLOR
-          });
+          var selected = value === j;
+          me.updateNoteDisplay(note, selected);
         });
       }
     },
