@@ -6,5 +6,10 @@ function main() {
     rect1.attr({
 		fill: '#ffffff'
 	});
-}
+  new NotesBox({
+    paper: paper,
+    startX: 0,
+    startY: 0
+  });
 
+}

@@ -19,7 +19,7 @@ function EffectsData(ownerId) {
 		this.values[i] = [0.5, 0.5];
 	}
 
-	this.get
+//	this.get
 }
 
 EffectsData.prototype = new EventEmitter();
