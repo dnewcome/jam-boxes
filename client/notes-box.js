@@ -7,7 +7,7 @@ var NotesBox = (function() {
   var CLEAR_COLOR = '#fff';
   var NORMAL_STROKE = '#777';
   var DROPPABLE_STROKE = '#00ff00';
-
+  var ZOOM_FACTOR = 3;
 
   function createOuter() {
     var me = this,
@@ -90,7 +90,7 @@ var NotesBox = (function() {
 
       if(editable !== me.editable) {
         me.editable = editable;
-        me.zoom(editable ? 2 : 1);
+        me.zoom(editable ? ZOOM_FACTOR : 1);
         if (editable) {
           me.shapes.forEach(function(shape) {
             shape.toFront();
