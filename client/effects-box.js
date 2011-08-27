@@ -16,6 +16,8 @@ function EffectsData(ownerId, measures, notesPerMeasure) {
 	this.notesPerBox = notesPerMeasure;
 	this.numBoxes = measures;
 
+	this.overrideProvider = undefined;
+
 	this.ownerId = ownerId;	// if owner is local user, ownerId = 0
 
 	this.values = [];	// each value is of the form [x, y], where x and y are between 0-1 inclusive
@@ -95,6 +97,10 @@ EffectsData.prototype.tick = function() {
 		this.currentIndex = 0;
 	}
 
+	if (typeof this.overrideProvider !== 'undefined') {
+		this.values[this.currentIndex] = this.overrideProvider.getOverrideValue();
+	}
+
 	this.emit('update', this.currentIndex, this.values[this.currentIndex]);
 }
 
@@ -107,6 +113,10 @@ EffectsData.prototype.setVal = function(ind, val, shouldUpdate) {
 		this.emit('update', this.currentIndex, this.values[this.currentIndex]);
 	}
 };
+
+EffectsData.prototype.setValOverride = function(overrideProvider) {
+	this.overrideProvider = overrideProvider;
+}
 
 EffectsData.prototype.getVal = function(ind) {
 	this.playIndex(ind);
@@ -211,7 +221,55 @@ function EffectsController(x, y, width, height, data) {
 	var eventBox = paper.rect(this.xpos, this.ypos, this.width, this.height);
 	eventBox.attr({fill: '#000000', 'fill-opacity': 0.01, stroke: 'none'});
 
-//	eventBox.node.onclick(funct
+	this.overrideValue = undefined;
+
+	this.isMouseDown = false;
+	this.wasInEventBox = false;
+
+	if (this.data.ownerId === 0) {
+		eventBox.mousedown(function(event) {
+			that.isMouseDown = true;
+			var xVal = (event.layerX-that.xpos)/that.width;
+			var yVal = (event.layerY-that.ypos)/that.height;
+			that.overrideValue = [xVal, yVal];
+	
+			that.data.setValOverride(that);
+		});
+
+		this.onMouseUp = function(event) {
+			that.isMouseDown = false;
+			if (typeof that.overrideValue !== 'undefined') {
+				that.data.setValOverride(undefined);
+				that.overrideValue = undefined;
+			}
+		};
+
+		eventBox.mouseup(this.onMouseUp);
+
+		eventBox.mousemove(function(event) {
+			if (typeof that.overrideValue !== 'undefined' && that.isMouseDown === true) {
+				var xVal = (event.layerX-that.xpos)/that.width;
+				var yVal = (event.layerY-that.ypos)/that.height;
+				that.overrideValue = [xVal, yVal];
+			}
+		});
+
+		eventBox.mouseout(function(event) {
+			if (typeof that.overrideValue !== 'undefined') {
+				that.wasInEventBox = true;
+			}
+		});
+	
+		eventBox.mouseover(function(event) {
+			if (that.wasInEventBox === true && that.isMouseDown === true) {
+				that.wasInEventBox = false;
+				var xVal = (event.layerX-that.xpos)/that.width;
+				var yVal = (event.layerY-that.ypos)/that.height;
+				that.overrideValue = [xVal, yVal];
+				that.data.setValOverride(that);
+			}
+		});
+	}
 
 	this.shapes.push(this.mainBox, this.effectsPoint, eventBox);
 
@@ -220,4 +278,8 @@ function EffectsController(x, y, width, height, data) {
 		var newY = that.ypos + val[1]*(that.height-16) + 5;
 		that.effectsPoint.attr({x: newX, y: newY});
 	});
+
+	this.getOverrideValue = function() {
+		return that.overrideValue;
+	}
 }
