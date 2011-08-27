@@ -65,7 +65,10 @@
       i,
       effectsModel);
     effectsBoxRegistry.boxes.push(effectsBox);
+  }
 
+  function createEffectsController(effectsModel, xpos, ypos) {
+  	return new EffectsController(xpos, ypos, BOX_OUTER_WIDTH*2+MEASURE_MARGIN, BOX_OUTER_HEIGHT*2+MEASURE_MARGIN, effectsModel);
   }
 
   function getYPos(rowIndex) {
@@ -83,6 +86,8 @@
         ypos = getYPos(rowIndex);
 
     createName(ownerId, ypos, rowIndex);
+
+	var effectsController = createEffectsController(effectsModel, getXPos(MEASURES)+MEASURE_MARGIN, ypos);
 
     for (var i = 0; i < MEASURES; ++i) {
       var xpos = getXPos(i);

@@ -182,3 +182,42 @@ function EffectsBox(x, y, width, height, ind, data) {
 		that.mainBox.attr(that.mainBoxAttr);
 	};
 }
+
+
+function EffectsController(x, y, width, height, data) {
+	var that = this;
+
+	this.xpos = x;
+	this.ypos = y;
+	this.width = width;
+	this.height = height;
+
+	this.data = data;
+
+	this.shapes = [];
+
+	this.mainBox = paper.rect(this.xpos, this.ypos, this.width, this.height, 10);
+	this.mainBoxAttr = {
+		fill: '90-#f1f400-#e8f250',
+		stroke: '#e63d91',
+		'stroke-width': 2
+		};
+	this.mainBox.attr(this.mainBoxAttr);
+
+	this.effectsPoint = paper.rect(this.xpos + 0.5*(this.width-16) + 5, this.ypos + 0.5*(this.width-16) + 5, 10, 10, 5);
+	this.effectsPoint.attr({fill: '90-#e63d91-#e128d9', stroke: '#000000'});
+
+	// box which handles all mouse events
+	var eventBox = paper.rect(this.xpos, this.ypos, this.width, this.height);
+	eventBox.attr({fill: '#000000', 'fill-opacity': 0.01, stroke: 'none'});
+
+	
+
+	this.shapes.push(this.mainBox, this.effectsPoint, eventBox);
+
+	data.on('update', function(ind, val) {
+		var newX = that.xpos + val[0]*(that.width-16) + 5;
+		var newY = that.ypos + val[1]*(that.height-16) + 5;
+		that.effectsPoint.attr({x: newX, y: newY});
+	});
+}
