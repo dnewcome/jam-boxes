@@ -11,18 +11,18 @@ var NotesBox = (function() {
   var SELECTED_COLOR = '90-#66ddf3-#15bfde';
   var CLEAR_COLOR = '#fff';
   var NORMAL_STROKE = '#15bfde';
+  var NORMAL_STROKE_WIDTH = 2;
   var DROPPABLE_STROKE = '#ffffff';
+  var DROPPABLE_STROKE_WIDTH = 4;
   var ZOOM_FACTOR = 3;
 
   function createOuter() {
     var me = this,
         paper = me.paper,
         outer = me.outer = paper.rect(me.xpos, me.ypos, me.width, me.height,
-      10).attr({
-      fill: '90-#e128d9-#e63d91',
-      stroke: NORMAL_STROKE,
-      'stroke-width': 2
-    });
+      10).attr({ fill: '90-#e128d9-#e63d91' });
+
+    me.leaveDrop();
 
     $(outer.node).bind('click', me.onOuterClick.bind(me));
     me.trackEl(outer);
@@ -134,11 +134,17 @@ var NotesBox = (function() {
     },
 
     enterDrop: function() {
-		  this.outer.attr({stroke: DROPPABLE_STROKE});
+		  this.outer.attr({
+        stroke: DROPPABLE_STROKE,
+        'stroke-width': DROPPABLE_STROKE_WIDTH
+      });
     },
 
     leaveDrop: function() {
-		  this.outer.attr({stroke: NORMAL_STROKE});
+		  this.outer.attr({
+        stroke: NORMAL_STROKE,
+        'stroke-width': NORMAL_STROKE_WIDTH
+      });
     },
 
     updateNoteDisplay: function(note, selected) {
