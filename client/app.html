@@ -1,26 +1,40 @@
+<!doctype html>
 <html>
-    <head>
-        <title>JAM BOXES</title>
-        <script type="text/javascript" src="lib/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="lib/raphael-min.js"></script>
-        <script type="text/javascript" src="lib/events.js"></script>
-        <script type="text/javascript" src="model.js"></script>
-        <script type="text/javascript" src="shape.js"></script>
-        <script type="text/javascript" src="effects-box.js"></script>
-        <script type="text/javascript" src="notes-box.js"></script>
-        <script type="text/javascript" src="dnd-manager.js"></script>
-        <script type="text/javascript" src="main.js"></script>
+<head>
+  <title>JAM BOXES</title>
+  <script type="text/javascript" src="lib/jquery-1.6.2.min.js"></script>
+  <script type="text/javascript" src="lib/raphael-min.js"></script>
+  <script type="text/javascript" src="lib/events.js"></script>
+  <script type="text/javascript" src="model.js"></script>
+  <script type="text/javascript" src="shape.js"></script>
+  <script type="text/javascript" src="effects-box.js"></script>
+  <script type="text/javascript" src="notes-box.js"></script>
+  <script type="text/javascript" src="dnd-manager.js"></script>
+  <script type="text/javascript" src="main.js"></script>
 
-	</script>
-        <style type="text/css">
-            #canvas {
-                width: 980px;
-                height: 600px;
-                border: 1px solid #000000;
-            }
-        </style>
-    </head>
-	<body onload="main();">
-        <div id="canvas"></div>
-    </body>
+  <link href='http://fonts.googleapis.com/css?family=Stardos+Stencil' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+    h1, h2 {
+      text-align: center;
+      font-family: 'Stardos Stencil', cursive;
+    }
+
+    #canvas {
+      width: 980px;
+      height: 600px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Jam Boxes</h1>
+  </header>
+
+  <div id="canvas"></div>
+
+  <footer>
+    <h2>Brought to you by: <strong>Socket 2 Ya</strong></h2>
+  </footer>
+</body>
 </html>
