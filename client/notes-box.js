@@ -5,7 +5,8 @@ var NotesBox = (function() {
   var NOTES = 10;
   var SELECTED_COLOR = '#000';
   var CLEAR_COLOR = '#fff';
-
+  var NORMAL_STROKE = '#777';
+  var DROPPABLE_STROKE = '#00ff00';
 
 
   function createOuter() {
@@ -13,7 +14,8 @@ var NotesBox = (function() {
         paper = me.paper,
         outer = me.outer = paper.rect(me.xpos, me.ypos, me.width, me.height,
       10).attr({
-      fill: '#fff'
+      fill: '#fff',
+      stroke: NORMAL_STROKE
     });
 
     $(outer.node).bind('click', me.onOuterClick.bind(me));
@@ -113,11 +115,11 @@ var NotesBox = (function() {
     },
 
     enterDrop: function() {
-
+		  this.outer.attr({stroke: DROPPABLE_STROKE});
     },
 
     leaveDrop: function() {
-
+		  this.outer.attr({stroke: NORMAL_STROKE});
     },
 
     onModelUpdate: function(index, value) {
