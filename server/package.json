@@ -6,7 +6,8 @@
   "repository": "https://github.com/nko2/witty-team-name",
   "author": "Socket to the Man <dnewcome@elevenprime.com> (http://nodeknockout.com/teams/witty-team-name)",
   "dependencies": {
-    "express": ">= 2.3.11"
+    "express": ">= 2.3.11",
+	"socket.io-client": "0.7.9"
   },
   "devDependencies": {},
   "main": "server"
