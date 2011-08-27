@@ -112,6 +112,10 @@ var NotesBox = (function() {
         });
     },
 
+    enterDrop: function() {
+
+    },
+
     leaveDrop: function() {
 
     },

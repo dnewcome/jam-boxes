@@ -51,10 +51,11 @@ var Model = (function() {
     // ind - index in the current data where to start copying into.
     // values - values to copy in.
     copy: function(ind, values) {
-      var me = this;
-      values.forEach(function(value, index) {
+      var me = this, len = values.length;
+      for( var index = 0, value; index < len; ++index ) {
+        value = values[index];
         me.setVal(index+ind, value, true);
-      });
+      }
     }
   });
 
