@@ -3,14 +3,15 @@
       NOTES_PER_MEASURE = 4,
       TOTAL_BEATS = MEASURES * NOTES_PER_MEASURE,
       MEASURE_MARGIN = 10,
-      LEFT_MARGIN = 215,
+      CANVAS_WIDTH = 980,
       BOX_OUTER_WIDTH = 60,
       BOX_OUTER_HEIGHT = 60,
       BOX_INNER_WIDTH = 48,
-      BOX_INNER_HEIGHT = 48;
+      BOX_INNER_HEIGHT = 48,
+      LEFT_MARGIN = (CANVAS_WIDTH - (MEASURES * (BOX_OUTER_WIDTH + MEASURE_MARGIN))) / 2;
 
   function main() {
-    window.paper = Raphael('canvas', 980, 600);
+    window.paper = Raphael('canvas', CANVAS_WIDTH, 600);
 
     createUser(0, 0);
     var fakeData = [];
