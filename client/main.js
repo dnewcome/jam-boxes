@@ -52,7 +52,7 @@
   function createUser(ownerId, rowIndex, data) {
     var modelParams = {
       ownerId: ownerId,
-      getWidth: NOTES_PER_MEASURE
+      copySize: NOTES_PER_MEASURE
     };
 
     if(data) {
