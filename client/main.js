@@ -1,6 +1,7 @@
 (function() {
   var MEASURES = 8;
   var MEASURE_MARGIN = 10;
+  var LEFT_MARGIN = 50;
 
   function main() {
     window.paper = Raphael('canvas', 980, 600);
@@ -12,7 +13,7 @@
         model: model,
         modelOffset: i * 4,
         paper: paper,
-        xpos: i * (48 + MEASURE_MARGIN),
+        xpos: LEFT_MARGIN + i * (48 + MEASURE_MARGIN),
         ypos: 30
       });
     }
