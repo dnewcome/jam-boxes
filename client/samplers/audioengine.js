@@ -1,6 +1,6 @@
 function AudioEngine() {
 	this.interval;
-	this.samplers = [];
+	this.samplers = {};
 	this.sequences = {};
 
 	this.sampleRate = 44100;
@@ -26,8 +26,7 @@ AudioEngine.prototype.stop = function() {
 }
 
 AudioEngine.prototype.addSampler = function( name, sampler ) {
-	sampler.name = name;
-	this.samplers.push( sampler );
+	this.samplers[name] =  sampler;
 }
 
 /**
@@ -69,13 +68,23 @@ AudioEngine.prototype.addSequence = function( name, seq ) {
 		var tick = 0;
 
 AudioEngine.prototype.audioWriter = function() {
+	// start out with empty buffer
 	var additiveSignal = new Float32Array(this.bufferSize);
 
-	if( tick % 8 == 0 && this.sequences['snare'][ tick % 128 / 8 ] == 1 ) {
-		this.trigger( this.samplers[0] );
-	} 
+	// take a look at tick position to find out if we need to 
+	// trigger any generators
+	if( tick % 8 == 0 ) {
+		for( var seq in this.sequences ) {
+			var sequence = this.sequences[ seq ];
+			if( sequence[ tick % 128 / 8 ] == 1 ) {
+				this.trigger( this.samplers[ seq ] );
+			}
+		}
+
+	}
   
-	for( var i=0; i < this.samplers.length; i++ ) {
+	// generate the sample data for any playing generators
+	for( var i in this.samplers ) {
 		var s = this.samplers[i];
 		if ( s.envelope.isActive() ) {
 		  s.generate();
@@ -83,7 +92,7 @@ AudioEngine.prototype.audioWriter = function() {
 		}
 	}
   
-	  this.output.mozWriteAudio(additiveSignal);
+	this.output.mozWriteAudio(additiveSignal);
 
 	tick++;
 };
