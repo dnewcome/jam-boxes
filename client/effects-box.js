@@ -137,18 +137,18 @@ function EffectsBox(x, y, width, height, ind, data) {
 
 	this.mainBox = paper.rect(this.xpos, this.ypos, this.width, this.height, 10);
 	this.mainBoxAttr = {
-		fill: '90-#a500a7-#e752c6',
-		stroke: '#ece415',
+		fill: '90-#f1f400-#e8f250',
+		stroke: '#e63d91',
 		'stroke-width': 2
 		};
 	this.mainBoxAttrHighlight = {
-		fill: '90-#b51ab7-#e78fd3',
+		fill: '90-#f8fa73-#f8fda9',
 		'stroke-width': 2
 	};
 	this.mainBox.attr(this.mainBoxAttr);
 
 	this.effectsPoint = paper.rect(this.xpos + 0.5*(this.width-16) + 5, this.ypos + 0.5*(this.width-16) + 5, 10, 10, 5);
-	this.effectsPoint.attr({fill: '90-#ece415-#fbff93', stroke: '#000000'});
+	this.effectsPoint.attr({fill: '90-#e63d91-#e128d9', stroke: '#000000'});
 
 	// box which handles all mouse events
 	var eventBox = paper.rect(this.xpos, this.ypos, this.width, this.height);
