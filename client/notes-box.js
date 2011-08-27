@@ -11,6 +11,8 @@ var NotesBox = (function() {
   var INNER_Y_OFFSET = (OUTER_HEIGHT - INNER_HEIGHT)/2;
   var BEAT_WIDTH = INNER_WIDTH / BEATS;
   var NOTE_HEIGHT = INNER_HEIGHT / NOTES;
+  var SELECTED_COLOR = '#000';
+  var CLEAR_COLOR = '#fff';
 
   var Box = function(config) {
     Shape.prototype.constructor.apply(this, arguments);
@@ -42,8 +44,8 @@ var NotesBox = (function() {
           var x = INNER_X_OFFSET + i * BEAT_WIDTH;
           var y = INNER_Y_OFFSET + j * NOTE_HEIGHT;
           var item = paper.rect(x, y, BEAT_WIDTH, NOTE_HEIGHT).attr({
-            fill: '#fff'
-          }).click(me.onNoteClick.bind(this));
+            fill: CLEAR_COLOR
+          }).click(me.onNoteClick.bind(item, me, i, j));
 
           shapes.push(item);
         }
@@ -52,8 +54,13 @@ var NotesBox = (function() {
       shapes.push(outer);
     },
 
-    onNoteClick: function(event) {
+    onNoteClick: function(box, x, y, event) {
       var target = event.target;
+
+      fill = this.attr()['fill'];
+
+      this.attr('fill', '#000');
+
     }
 
   });
