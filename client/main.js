@@ -1,7 +1,11 @@
 (function() {
-  var MEASURES = 8;
-  var MEASURE_MARGIN = 10;
-  var LEFT_MARGIN = 50;
+  var MEASURES = 8,
+      MEASURE_MARGIN = 10,
+      LEFT_MARGIN = 50,
+      BOX_OUTER_WIDTH = 48,
+      BOX_OUTER_HEIGHT = 48,
+      BOX_INNER_WIDTH = 36,
+      BOX_INNER_HEIGHT = 36;
 
   function main() {
     window.paper = Raphael('canvas', 980, 600);
@@ -14,7 +18,11 @@
         modelOffset: i * 4,
         paper: paper,
         xpos: LEFT_MARGIN + i * (48 + MEASURE_MARGIN),
-        ypos: 30
+        ypos: 30,
+        width: BOX_OUTER_WIDTH,
+        height: BOX_OUTER_HEIGHT,
+        innerWidth: BOX_INNER_WIDTH,
+        innerHeight: BOX_INNER_HEIGHT
       });
     }
 

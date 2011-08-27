@@ -3,14 +3,6 @@
 var NotesBox = (function() {
   var BEATS = 4;
   var NOTES = 10;
-  var OUTER_WIDTH = 48;
-  var OUTER_HEIGHT = 48;
-  var INNER_WIDTH = 36;
-  var INNER_HEIGHT = 36;
-  var INNER_X_OFFSET = (OUTER_WIDTH - INNER_WIDTH)/2;
-  var INNER_Y_OFFSET = (OUTER_HEIGHT - INNER_HEIGHT)/2;
-  var BEAT_WIDTH = INNER_WIDTH / BEATS;
-  var NOTE_HEIGHT = INNER_HEIGHT / NOTES;
   var SELECTED_COLOR = '#000';
   var CLEAR_COLOR = '#fff';
 
@@ -19,7 +11,7 @@ var NotesBox = (function() {
   function createOuter() {
     var me = this,
         paper = me.paper,
-        outer = me.outer = paper.rect(me.xpos, me.ypos, OUTER_WIDTH, OUTER_HEIGHT,
+        outer = me.outer = paper.rect(me.xpos, me.ypos, me.width, me.height,
       10).attr({
       fill: '#fff'
     });
@@ -33,9 +25,14 @@ var NotesBox = (function() {
         paper = me.paper,
         shapes = me.shapes,
         noteBoxes = me.noteBoxes,
-        innerStartX = me.xpos + INNER_X_OFFSET,
-        innerStartY = me.ypos + INNER_Y_OFFSET,
-        inner = paper.rect(innerStartX, innerStartY, INNER_WIDTH, INNER_HEIGHT);
+        innerXOffset = (me.width - me.innerWidth)/2,
+        innerYOffset = (me.height - me.innerHeight)/2,
+        innerStartX = me.xpos + innerXOffset,
+        innerStartY = me.ypos + innerYOffset,
+        inner = paper.rect(innerStartX, innerStartY, me.innerWidth, me.innerHeight);
+
+    var BEAT_WIDTH = me.innerWidth / BEATS;
+    var NOTE_HEIGHT = me.innerHeight / NOTES;
 
     for (var i=0; i < BEATS; ++i) {
       // this is the offset into the model
@@ -70,9 +67,6 @@ var NotesBox = (function() {
     init: function(config) {
       var me=this;
       $.extend(me, config);
-
-      me.width = OUTER_WIDTH;
-      me.height = OUTER_HEIGHT;
 
       me.noteBoxes = [];
 
