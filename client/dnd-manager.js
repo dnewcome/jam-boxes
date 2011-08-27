@@ -21,9 +21,10 @@ function rectIntersect(rect1, rect2) {	/* from cocosCairo */
 		}
 }
 
-function BoxDNDManager() {
+function BoxDNDManager(registry) {
 	var that = this;
 
+	this.registry = registry;
 	this.destination = undefined;
 	this.dragBox = undefined;
 	this.ghost = undefined;
@@ -59,19 +60,19 @@ function BoxDNDManager() {
 		}
 
 		var inBox = false;
-		for (var i=0; i<effectsBoxRegistry.boxes.length; i++) {
+		for (var i=0; i<that.registry.boxes.length; i++) {
 			var xloc = that.dragBox.xpos+dx;
 			var yloc = that.dragBox.ypos+dy;
 
-			var destBox = effectsBoxRegistry.boxes[i];
+			var destBox = that.registry.boxes[i];
 			if (destBox == that.dragBox) {
 				continue;
 			}
 			if (rectIntersect({xpos: xloc, ypos: yloc, width: that.dragBox.width, height: that.dragBox.height},
 				{xpos: destBox.xpos, ypos: destBox.ypos, width: destBox.width, height: destBox.height})) {
-				if (typeof that.destination === 'undefined') {
+//				if (typeof that.destination === 'undefined') {
 					that.destMouseEnter(destBox, null);
-				}
+//				}
 				inBox = true;
 				break;
 			}		
@@ -88,7 +89,7 @@ function BoxDNDManager() {
 
 		if (typeof that.destination !== 'undefined') {
 			var srcData = that.dragBox.data.getValues(that.dragBox.ind);
-			that.destination.data.receiveDrop(that.dragBox.ind, srcData);
+			that.destination.data.receiveDrop(that.destination.ind, srcData);
 			that.destMouseLeave(that.destination, null);
 		}
 
@@ -105,6 +106,9 @@ function BoxDNDManager() {
 
 	this.destMouseEnter = function(box, event) {
 		if (typeof that.dragBox !== 'undefined' && that.dragBox != box && box.data.ownerId === 0) {	// make sure destination != source and that the user owns the destination
+			if (that.destination !== 'undefined') {
+				that.destMouseLeave(that.destination, null);
+			}
 			that.destination = box;
 			that.destination.enterDrop();
 		}
@@ -118,4 +122,4 @@ function BoxDNDManager() {
 	};
 }
 
-effectsBoxDNDManager = new BoxDNDManager();
+effectsBoxDNDManager = new BoxDNDManager(effectsBoxRegistry);
