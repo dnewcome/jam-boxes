@@ -96,6 +96,11 @@ var NotesBox = (function() {
       if(editable !== me.editable) {
         me.editable = editable;
         me.zoom(editable ? 2 : 1);
+        if (editable) {
+          me.shapes.forEach(function(shape) {
+            shape.toFront();
+          });
+        }
       }
     },
 
@@ -128,9 +133,8 @@ var NotesBox = (function() {
     },
 
     onNoteClick: function(x, y, event) {
-      event.stopPropagation();
-
       var me=this;
+      me.ignorePaperClick = true;
       if (me.editable) {
         me.model.setVal(x, y, true);
       }
@@ -140,13 +144,20 @@ var NotesBox = (function() {
     },
 
     onOuterClick: function(event) {
-      event.stopPropagation();
-
-      this.setEditable(true);
+      var me = this;
+      if (!me.ignorePaperClick) {
+        me.setEditable(true);
+        me.ignorePaperClick = true;
+      }
     },
 
     onPaperClick: function() {
-      this.setEditable(false);
+      var me = this;
+      if (!me.ignorePaperClick) {
+        me.setEditable(false);
+      }
+
+      me.ignorePaperClick = false;
     }
 
   });
