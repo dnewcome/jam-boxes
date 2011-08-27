@@ -14,27 +14,50 @@
 
   <link href='http://fonts.googleapis.com/css?family=Stardos+Stencil' rel='stylesheet' type='text/css'>
   <style type="text/css">
-    h1, h2 {
-      text-align: center;
-      font-family: 'Stardos Stencil', cursive;
+
+    h1 {
+      font-size: 1.75em;
     }
 
-    #canvas {
+    h2 {
+      font-size: 1.25em;
+    }
+
+    h1, h2 {
+      font-family: 'Stardos Stencil', cursive;
+      /*color: #fff;*/
+      margin: 0;
+      padding: 0;
+      display: inline-block;
+    }
+
+    #container {
       width: 980px;
       height: 600px;
       margin: 0 auto;
+      padding: 0 10px;
+   /*   background: -moz-linear-gradient(center top, #030303 0%, #2e2d2e 100%);
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #030303), color-stop(1, #2e2d2e));
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      border-radius: 10px;
+      */
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Jam Boxes</h1>
-  </header>
+  <div id="container">
+    <header>
+      <hgroup>
+        <h1>Jam Boxes</h1>
+        <h2> - Socket 2 Ya</h2>
+      </hgroup>
+    </header>
 
-  <div id="canvas"></div>
+    <div id="canvas"></div>
 
-  <footer>
-    <h2>Brought to you by: <strong>Socket 2 Ya</strong></h2>
-  </footer>
+    <footer>
+    </footer>
+  </div>
 </body>
 </html>
