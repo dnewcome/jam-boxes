@@ -48,7 +48,10 @@ var Model = (function() {
 
     // gets a set of values starting at ind
     getValues: function(ind) {
-      var vals = this.values.slice(ind, ind + 4);
+      var vals = [];
+      for(var i = 0, val; i < 4; ++i) {
+        vals[i] = this.values[i+ind];
+      }
       return vals;
     },
 
