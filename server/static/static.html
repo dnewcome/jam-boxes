@@ -1,7 +1,36 @@
 <!doctype html>
 <html>
-<head></head>
+<head>
+   <script src="/socket.io/socket.io.js"></script>
+   <script src="/lib/jquery-1.6.2.min.js"></script>
+    <script>
+        var socket = io.connect();
+        socket.on('broadcast', function( data ){ 
+        $('#container').prepend('<li>message' + data + '</li>');
+            });
+        socket.on('disconnect', function(){})
+        
+        function broadcast() {
+            var bdata = document.getElementById( 'bdata' ).value;       
+            console.log( 'broadcasting' );
+            socket.emit( 'broadcast', bdata );
+        }
+
+        function join() {
+            var jamname = document.getElementById( 'jamname' ).value;       
+            console.log( 'joining jam ' + jamname );
+            socket.emit( 'join', jamname );
+        }
+	</script>
+</head>
 <body>
 <h1>Served from static</h1>
+    <button onclick="broadcast();">Broadcast</button>
+    <input id="bdata"></input>
+
+    <button onclick="join();">Join</button>
+    <input id="jamname"></input>
+	
+	<div id="container"></div>
 </body>
 </html>
