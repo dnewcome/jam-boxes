@@ -36,7 +36,7 @@ var NotesBox = (function() {
     me.trackEl(inner);
     for (var i=0; i < BEATS; ++i) {
       // this is the offset into the model
-      var dataI = i + me.dataOffset;
+      var dataI = i + me.ind;
       noteBoxes[dataI] = [];
       for (var j=0; j < NOTES; ++j) {
         var x = innerStartX + i * BEAT_WIDTH,
@@ -110,6 +110,10 @@ var NotesBox = (function() {
         shapes.forEach(function(shape, index) {
           shape.animate(params, 300, "bounce");
         });
+    },
+
+    leaveDrop: function() {
+
     },
 
     onModelUpdate: function(index, value) {

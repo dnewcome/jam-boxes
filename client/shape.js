@@ -25,6 +25,7 @@ var Shape = (function() {
       me.shapes.push(el);
 
       el.drag(function(dx, dy) {
+        // If we have actually moved, then we are not clicking.
         effectsBoxDNDManager.dragMove(me, dx, dy);
         click = false;
       }, function(dx, dy) {
@@ -53,10 +54,6 @@ var Shape = (function() {
 
     // draw the control contents
     draw: function( val ) {
-    },
-
-    onClick: function() {
-
     }
 
   });

@@ -13,9 +13,9 @@
     var notesData = new Model();
 
     for (var i = 0; i < MEASURES; ++i) {
-      new NotesBox({
+      var measureBox = new NotesBox({
         data: notesData,
-        dataOffset: i * 4,
+        ind: i * 4,
         paper: paper,
         xpos: LEFT_MARGIN + i * (48 + MEASURE_MARGIN),
         ypos: 30,
@@ -24,6 +24,7 @@
         innerWidth: BOX_INNER_WIDTH,
         innerHeight: BOX_INNER_HEIGHT
       });
+		  effectsBoxRegistry.boxes.push(measureBox);
     }
 
 	var effectsData1 = new EffectsData(0);

@@ -5,6 +5,7 @@
 var Model = (function() {
 
   var Model = function() {
+    this.ownerId = 0;
     this.values = [];
   };
 
@@ -24,10 +25,14 @@ var Model = (function() {
     // ind: index of the value to be set
     // shouldUpdate: whether or not the UI should receive an update notification
     setVal: function(ind, val, shouldUpdate) {
-      this.values[ind] = val;
-      if (shouldUpdate !== false) {
-        this.emit("update", ind, val);
-        this.updateUI();
+      var me = this;
+
+      if(val !== me.values[ind]) {
+        me.values[ind] = val;
+        if (shouldUpdate !== false) {
+          me.emit("update", ind, val);
+          me.updateUI();
+        }
       }
     },
 
@@ -36,19 +41,20 @@ var Model = (function() {
       return this.values[ind];
     },
 
-    // gets all values
-    getAll: function() {
-      return this.values;
+    // gets a set of values starting at ind
+    getValues: function(ind) {
+      var vals = this.values.slice(ind, ind + 4);
+      return vals;
     },
 
     // copy the given values, copy into locations starting at ind.
     // ind - index in the current data where to start copying into.
     // values - values to copy in.
     copy: function(ind, values) {
-      for (var i=0, value; value = values[i]; i++) {
-        var shouldUpdate = this.currentIndex == ind;
-        this.setVal(value, i+ind, shouldUpdate);
-      }
+      var me = this;
+      values.forEach(function(value, index) {
+        me.setVal(index+ind, value, true);
+      });
     }
   });
 
