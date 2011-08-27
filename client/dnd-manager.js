@@ -40,17 +40,19 @@ function BoxDNDManager(registry) {
 		that.ghost = {};
 		that.ghost.shapes = [];
 		that.ghostBBoxes = [];
-
-		for( var i=0; i < box.shapes.length; i++ ) {
-			that.ghost.shapes[i] = box.shapes[i].clone();
-			that.ghost.shapes[i].attr({opacity: 0.2});
-			that.ghostBBoxes[i] = that.ghost.shapes[i].getBBox();
-		}
 	};
 
 	this.dragMove = function(box, dx, dy) {
 		if (box != that.dragBox) {
 			return;
+		}
+
+		if (that.ghost.shapes.length === 0) {
+			for( var i=0; i < box.shapes.length; i++ ) {
+				that.ghost.shapes[i] = box.shapes[i].clone();
+				that.ghost.shapes[i].attr({opacity: 0.2});
+				that.ghostBBoxes[i] = that.ghost.shapes[i].getBBox();
+			}
 		}
 
 		for (var i=0; i<box.shapes.length; i++) {
