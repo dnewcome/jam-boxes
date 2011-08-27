@@ -76,6 +76,20 @@ var NotesBox = (function() {
       $(me.paper.canvas).bind("click", me.onPaperClick.bind(me));
       me.data.on("update", this.onModelUpdate.bind(this));
       this.setEditable(false);
+      this.updateFromData();
+    },
+
+    updateFromData: function() {
+      var me = this,
+          values = me.data.getValues(me.ind),
+          len = values.length;
+
+
+      for(var i = 0, value; i < len; ++i) {
+        value = values[i];
+
+        me.onModelUpdate(i + me.ind, value);
+      }
     },
 
     draw: function() {
@@ -88,7 +102,7 @@ var NotesBox = (function() {
     setEditable: function(editable) {
       var me = this;
 
-      if(editable !== me.editable) {
+      if(editable !== me.editable && me.data.ownerId === 0) {
         me.editable = editable;
         me.zoom(editable ? ZOOM_FACTOR : 1);
         if (editable) {

@@ -1,17 +1,21 @@
 (function() {
   var MEASURES = 8,
       MEASURE_MARGIN = 10,
-      LEFT_MARGIN = 196,
-      BOX_OUTER_WIDTH = 48,
-      BOX_OUTER_HEIGHT = 48,
-      BOX_INNER_WIDTH = 36,
-      BOX_INNER_HEIGHT = 36;
+      LEFT_MARGIN = 215,
+      BOX_OUTER_WIDTH = 60,
+      BOX_OUTER_HEIGHT = 60,
+      BOX_INNER_WIDTH = 48,
+      BOX_INNER_HEIGHT = 48;
 
   function main() {
     window.paper = Raphael('canvas', 980, 600);
 
     createUser(0, 0);
-    createUser(1, 1);
+    var fakeData = [];
+    for(var i = 0; i < 32; ++i) {
+      fakeData[i] = ~~(Math.random() * 10);
+    }
+    createUser(1, 1, fakeData);
 
     var effectsData1 = new EffectsData(0);
 
@@ -43,18 +47,23 @@
   }
 
 
-  function createUser(ownerId, rowIndex) {
-    var notesData = new Model({
+  function createUser(ownerId, rowIndex, data) {
+    var modelParams = {
       ownerId: ownerId
-    });
+    };
+
+    if(data) {
+      modelParams.values = data;
+    }
+    var notesData = new Model(modelParams);
 
     for (var i = 0; i < MEASURES; ++i) {
       var measureBox = new NotesBox({
         data: notesData,
         ind: i * 4,
         paper: paper,
-        xpos: LEFT_MARGIN + i * (48 + MEASURE_MARGIN),
-        ypos: 50 + (rowIndex * (50 + 20)),
+        xpos: LEFT_MARGIN + i * (BOX_OUTER_WIDTH + MEASURE_MARGIN),
+        ypos: BOX_OUTER_HEIGHT * 1.5 + (rowIndex * (BOX_OUTER_HEIGHT + 20)),
         width: BOX_OUTER_WIDTH,
         height: BOX_OUTER_HEIGHT,
         innerWidth: BOX_INNER_WIDTH,
