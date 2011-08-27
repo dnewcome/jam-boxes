@@ -21,15 +21,22 @@ var NotesBox = (function() {
   $.extend(Box.prototype, {
     init: function(config) {
       var me=this;
+      me.model = config.model;
       me.paper = config.paper;
       me.startX = config.startX;
       me.startY = config.startY;
+      me.noteBoxes = [];
 
       Shape.prototype.init.call(this);
+
+      me.model.on("update", this.updateNote.bind(this));
     },
 
     draw: function() {
-      var me=this, paper = me.paper, shapes = me.shapes;
+      var me=this,
+          paper = me.paper,
+          shapes = me.shapes,
+          noteBoxes = me.noteBoxes;
 
       var outer = me.outer = paper.rect(me.startX, me.startY, OUTER_WIDTH, OUTER_HEIGHT,
         10).attr({
@@ -39,15 +46,18 @@ var NotesBox = (function() {
       var inner = paper.rect(INNER_X_OFFSET, INNER_Y_OFFSET, INNER_WIDTH, INNER_HEIGHT);
       shapes.push(inner);
 
-      for (var i=0; i < BEATS; i++) {
-        for (var j=0; j < NOTES; j++) {
+      for (var i=0; i < BEATS; ++i) {
+        noteBoxes[i] = [];
+        for (var j=0; j < NOTES; ++j) {
           var x = INNER_X_OFFSET + i * BEAT_WIDTH;
           var y = INNER_Y_OFFSET + j * NOTE_HEIGHT;
-          var item = paper.rect(x, y, BEAT_WIDTH, NOTE_HEIGHT).attr({
-            fill: CLEAR_COLOR
-          }).click(me.onNoteClick.bind(item, me, i, j));
+          var note = paper.rect(x, y, BEAT_WIDTH, NOTE_HEIGHT).attr({
+            fill: CLEAR_COLOR,
+            stroke: "none"
+          }).click(me.onNoteClick.bind(note, me, i, j));
 
-          shapes.push(item);
+          shapes.push(note);
+          noteBoxes[i][j] = note;
         }
       }
 
@@ -55,12 +65,18 @@ var NotesBox = (function() {
     },
 
     onNoteClick: function(box, x, y, event) {
-      var target = event.target;
+      box.model.setVal(x, y, true);
+    },
 
-      fill = this.attr()['fill'];
+    updateNote: function(index, value) {
+      var me=this,
+          noteBoxes = me.noteBoxes[index];
 
-      this.attr('fill', '#000');
-
+      noteBoxes.forEach(function(note, j) {
+        note.attr({
+          fill: value === j ? SELECTED_COLOR : CLEAR_COLOR
+        });
+      });
     }
 
   });
