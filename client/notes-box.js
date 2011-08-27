@@ -42,7 +42,7 @@ var NotesBox = (function() {
     var BEAT_WIDTH = me.innerWidth / me.notesPerMeasure;
     var NOTE_HEIGHT = me.innerHeight / NOTES;
 
-	inner.attr({stroke: '#fff', 'stroke-width': 2, opacity: 0.75});
+	inner.attr({stroke: '#ff0000', 'stroke-width': 2, opacity: 0.75});
     me.trackEl(inner);
     for (var i=0; i < me.notesPerMeasure; ++i) {
       // this is the offset into the model
