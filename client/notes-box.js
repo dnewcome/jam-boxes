@@ -8,20 +8,22 @@ notesBoxRegistry = new NotesBoxRegistry();
 
 var NotesBox = (function() {
   var NOTES = 10;
-  var SELECTED_COLOR = '#000';
+  //var SELECTED_COLOR = '90-#66ddf3-#15bfde';
+  var SELECTED_COLOR = '90-#e63d91-#e128d9';
   var CLEAR_COLOR = '#fff';
-  var NORMAL_STROKE = '#777';
-  var DROPPABLE_STROKE = '#00ff00';
+  var NORMAL_STROKE = '#e63d91';
+  var NORMAL_STROKE_WIDTH = 2;
+  var DROPPABLE_STROKE = '#ffffff';
+  var DROPPABLE_STROKE_WIDTH = 4;
   var ZOOM_FACTOR = 3;
 
   function createOuter() {
     var me = this,
         paper = me.paper,
         outer = me.outer = paper.rect(me.xpos, me.ypos, me.width, me.height,
-      10).attr({
-      fill: '#fff',
-      stroke: NORMAL_STROKE
-    });
+      10).attr({ fill: '90-#f1ff14-#f8ff8d' });
+
+    me.leaveDrop();
 
     $(outer.node).bind('click', me.onOuterClick.bind(me));
     me.trackEl(outer);
@@ -40,6 +42,7 @@ var NotesBox = (function() {
     var BEAT_WIDTH = me.innerWidth / me.notesPerMeasure;
     var NOTE_HEIGHT = me.innerHeight / NOTES;
 
+	inner.attr({stroke: '#ff0000', 'stroke-width': 2, opacity: 0.75});
     me.trackEl(inner);
     for (var i=0; i < me.notesPerMeasure; ++i) {
       // this is the offset into the model
@@ -48,10 +51,8 @@ var NotesBox = (function() {
       for (var j=0; j < NOTES; ++j) {
         var x = innerStartX + i * BEAT_WIDTH,
             y = innerStartY + j * NOTE_HEIGHT,
-            note = paper.rect(x, y, BEAT_WIDTH, NOTE_HEIGHT).attr({
-              fill: CLEAR_COLOR,
-              stroke: "none"
-            });
+            note = paper.rect(x, y, BEAT_WIDTH, NOTE_HEIGHT);
+            me.updateNoteDisplay(note, false);
 
         var node = note.node;
         // We pass the dataI and j so that we can set the model
@@ -72,13 +73,11 @@ var NotesBox = (function() {
   $.extend(Box.prototype, {
     init: function(config) {
       var me=this;
-      $.extend(me, config);
-
       me.noteBoxes = [];
 
-      Shape.prototype.init.call(me, config.dndManager);
+      Shape.prototype.init.call(me, config);
 
-      $(me.paper.canvas).bind("click", me.onPaperClick.bind(me));
+      $(window).bind("click", me.onPaperClick.bind(me));
       me.data.on("update", me.onModelUpdate.bind(me));
       me.setEditable(false);
       me.updateFromData();
@@ -134,11 +133,26 @@ var NotesBox = (function() {
     },
 
     enterDrop: function() {
-		  this.outer.attr({stroke: DROPPABLE_STROKE});
+		  this.outer.attr({
+        stroke: DROPPABLE_STROKE,
+        'stroke-width': DROPPABLE_STROKE_WIDTH
+      });
     },
 
     leaveDrop: function() {
-		  this.outer.attr({stroke: NORMAL_STROKE});
+		  this.outer.attr({
+        stroke: NORMAL_STROKE,
+        'stroke-width': NORMAL_STROKE_WIDTH
+      });
+    },
+
+    updateNoteDisplay: function(note, selected) {
+      note.attr({
+        stroke: selected ? '#000000' : 'none',
+        /*'stroke-opacity': 0.5,*/
+        fill: selected ? SELECTED_COLOR : CLEAR_COLOR,
+        'fill-opacity': selected ? 1.0 : 0.001
+      });
     },
 
     onModelUpdate: function(index, value) {
@@ -147,9 +161,8 @@ var NotesBox = (function() {
 
       if (noteBoxes) {
         noteBoxes.forEach(function(note, j) {
-          note.attr({
-            fill: value === j ? SELECTED_COLOR : CLEAR_COLOR
-          });
+          var selected = value === j;
+          me.updateNoteDisplay(note, selected);
         });
       }
     },

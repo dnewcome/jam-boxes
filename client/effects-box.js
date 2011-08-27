@@ -137,16 +137,18 @@ function EffectsBox(x, y, width, height, ind, data) {
 
 	this.mainBox = paper.rect(this.xpos, this.ypos, this.width, this.height, 10);
 	this.mainBoxAttr = {
-		fill: '90-#4070B0-#4477BB',
-		stroke: '#777777'
+		fill: '90-#f1f400-#e8f250',
+		stroke: '#e63d91',
+		'stroke-width': 2
 		};
 	this.mainBoxAttrHighlight = {
-		fill: '90-#4477BB-#5588FF'
+		fill: '90-#f8fa73-#f8fda9',
+		'stroke-width': 2
 	};
 	this.mainBox.attr(this.mainBoxAttr);
 
 	this.effectsPoint = paper.rect(this.xpos + 0.5*(this.width-16) + 5, this.ypos + 0.5*(this.width-16) + 5, 10, 10, 5);
-	this.effectsPoint.attr({fill: '#ffffff', stroke: '#ffffff'});
+	this.effectsPoint.attr({fill: '90-#e63d91-#e128d9', stroke: '#000000'});
 
 	// box which handles all mouse events
 	var eventBox = paper.rect(this.xpos, this.ypos, this.width, this.height);
@@ -173,10 +175,49 @@ function EffectsBox(x, y, width, height, ind, data) {
 	});
 
 	this.enterDrop = function() {
-		that.mainBox.attr({stroke: "#00ff00"});
+		that.mainBox.attr({stroke: "#ffffff", 'stroke-width': 4});
 	};
 
 	this.leaveDrop = function() {
 		that.mainBox.attr(that.mainBoxAttr);
 	};
+}
+
+
+function EffectsController(x, y, width, height, data) {
+	var that = this;
+
+	this.xpos = x;
+	this.ypos = y;
+	this.width = width;
+	this.height = height;
+
+	this.data = data;
+
+	this.shapes = [];
+
+	this.mainBox = paper.rect(this.xpos, this.ypos, this.width, this.height, 10);
+	this.mainBoxAttr = {
+		fill: '90-#f1f400-#e8f250',
+		stroke: '#e63d91',
+		'stroke-width': 2
+		};
+	this.mainBox.attr(this.mainBoxAttr);
+
+	this.effectsPoint = paper.rect(this.xpos + 0.5*(this.width-16) + 5, this.ypos + 0.5*(this.width-16) + 5, 10, 10, 5);
+	this.effectsPoint.attr({fill: '90-#e63d91-#e128d9', stroke: '#000000'});
+
+	// box which handles all mouse events
+	var eventBox = paper.rect(this.xpos, this.ypos, this.width, this.height);
+	eventBox.attr({fill: '#000000', 'fill-opacity': 0.01, stroke: 'none'});
+
+//	eventBox.node.onclick(funct
+
+	this.shapes.push(this.mainBox, this.effectsPoint, eventBox);
+
+	data.on('update', function(ind, val) {
+		var newX = that.xpos + val[0]*(that.width-16) + 5;
+		var newY = that.ypos + val[1]*(that.height-16) + 5;
+		that.effectsPoint.attr({x: newX, y: newY});
+	});
 }

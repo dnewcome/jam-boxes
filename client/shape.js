@@ -8,39 +8,27 @@ var Shape = (function() {
   }
 
   // inherit from EventEmitter
-  Shape.prototype = new EventEmitter();
+  Shape.prototype = new View();
   $.extend(Shape.prototype, {
     constructor: Shape,
-    init: function(dndManager) {
+    init: function(config) {
       // All of the shapes.
-      this.dndManager = dndManager;
       this.shapes = [];
-      this.draw();
+      View.prototype.init.call(this, config);
     },
 
     // track an element and attach DND behaviors
     trackEl: function(el) {
-      var me = this,
-          click = true;
+      var me = this;
 
       me.shapes.push(el);
 
       el.drag(function(dx, dy) {
-        // If we have actually moved, then we are not clicking.
         me.dndManager.dragMove(me, dx, dy);
-        click = false;
       }, function(dx, dy) {
         me.dndManager.dragStart(me);
-        // manually keep track of whether this is a click since Raphael is
-        // inept and does not use the DOM properly and then cancels events.
-        // If we find that the box does not move on dragUp, manually trigger a
-        // click event on the node so that our click handlers still get called.
-        click = true;
       }, function() {
         me.dndManager.dragUp(me);
-        if (click) {
-          $(el.node).click();
-        }
       });
     },
 
@@ -51,12 +39,7 @@ var Shape = (function() {
       }
 
       this.shapes = [];
-    },
-
-    // draw the control contents
-    draw: function( val ) {
     }
-
   });
 
   return Shape;

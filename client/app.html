@@ -2,33 +2,18 @@
 <html>
 <head>
   <title>JAM BOXES</title>
-  <script type="text/javascript" src="lib/jquery-1.6.2.min.js"></script>
-  <script type="text/javascript" src="lib/raphael-min.js"></script>
-  <script type="text/javascript" src="lib/events.js"></script>
-  <script type="text/javascript" src="model.js"></script>
-  <script type="text/javascript" src="shape.js"></script>
-  <script type="text/javascript" src="effects-box.js"></script>
-  <script type="text/javascript" src="notes-box.js"></script>
-  <script type="text/javascript" src="dnd-manager.js"></script>
-  <script type="text/javascript" src="main.js"></script>
-
-  <link href='http://fonts.googleapis.com/css?family=Stardos+Stencil' rel='stylesheet' type='text/css'>
   <style type="text/css">
 
-    h1 {
-      font-size: 1.75em;
-    }
-
-    h2 {
-      font-size: 1.25em;
-    }
-
-    h1, h2 {
-      font-family: 'Stardos Stencil', cursive;
-      /*color: #fff;*/
+    html, body {
       margin: 0;
       padding: 0;
-      display: inline-block;
+      background-color: #000000;
+    }
+
+    #logo {
+      background-image: url('logo.png');
+      width: 290px;
+      height: 83px;
     }
 
     #container {
@@ -36,22 +21,23 @@
       height: 600px;
       margin: 0 auto;
       padding: 0 10px;
-   /*   background: -moz-linear-gradient(center top, #030303 0%, #2e2d2e 100%);
-      background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #030303), color-stop(1, #2e2d2e));
-      -moz-border-radius: 10px;
-      -webkit-border-radius: 10px;
-      border-radius: 10px;
-      */
+    }
+
+    #canvas {
+      position: relative;
+    }
+
+    #canvas > .user {
+      position: absolute;
+      left: 10px;
+      color: #fff;
     }
   </style>
 </head>
 <body>
   <div id="container">
     <header>
-      <hgroup>
-        <h1>Jam Boxes</h1>
-        <h2> - Socket 2 Ya</h2>
-      </hgroup>
+      <div id="logo"></div>
     </header>
 
     <div id="canvas"></div>
@@ -59,5 +45,31 @@
     <footer>
     </footer>
   </div>
+  <script type="text/javascript" src="lib/jquery-1.6.2.min.js"></script>
+  <script type="text/javascript" src="lib/raphael-min.js"></script>
+  <script type="text/javascript" src="lib/events.js"></script>
+  <script type="text/javascript" src="model.js"></script>
+  <script type="text/javascript" src="arraymodel.js"></script>
+  <script type="text/javascript" src="usermodel.js"></script>
+  <script type="text/javascript" src="view.js"></script>
+  <script type="text/javascript" src="shape.js"></script>
+  <script type="text/javascript" src="effects-box.js"></script>
+  <script type="text/javascript" src="notes-box.js"></script>
+  <script type="text/javascript" src="userview.js"></script>
+  <script type="text/javascript" src="dnd-manager.js"></script>
+  <script type="text/javascript" src="main.js"></script>
+
+  <script type="text/html" id="userInfoTemplate">
+    <div class="user">
+      <div class="username"></div>
+      <p>
+        <label for="mute">Mute:</label><input type="checkbox" name="mute" value="mute" />
+      </p>
+      <p>
+        <label for="solo">Solo:</label><input type="checkbox" name="solo" value="solo" />
+      </p>
+    </div>
+  </script>
+
 </body>
 </html>

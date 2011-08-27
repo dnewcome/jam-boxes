@@ -1,56 +1,15 @@
+/*globals Raphael: true, Model: true, ArrayModel: true, NotesBox: true, EffectsData: true, EffectsBox: true, paper: true, notesBoxDNDManager: true, notesBoxRegistry: true, effectsBoxRegistry: true, UserModel: true*/
 (function() {
   var MEASURES = 8,
       NOTES_PER_MEASURE = 4,
       TOTAL_BEATS = MEASURES * NOTES_PER_MEASURE,
       MEASURE_MARGIN = 10,
-      LEFT_MARGIN = 215,
+      CANVAS_WIDTH = 980,
       BOX_OUTER_WIDTH = 60,
       BOX_OUTER_HEIGHT = 60,
       BOX_INNER_WIDTH = 48,
-      BOX_INNER_HEIGHT = 48;
-
-  function main() {
-    window.paper = Raphael('canvas', 980, 600);
-
-    createUser(0, 0);
-    var fakeData = [];
-    for (var i = 0; i < TOTAL_BEATS; ++i) {
-      fakeData[i] = ~~(Math.random() * 10);
-    }
-    createUser(1, 1, fakeData);
-
-    var effectsData2 = new EffectsData(1, MEASURES, NOTES_PER_MEASURE);
-    var effectsBox2 = new EffectsBox(400, 400, BOX_OUTER_WIDTH,
-      BOX_OUTER_HEIGHT, 0, effectsData2);
-
-    for (var i=0; i<effectsData2.notesPerBox*effectsData2.unitsPerNote; i++) {
-      var percent = i/(effectsData2.notesPerBox*effectsData2.unitsPerNote);
-      effectsData2.values[i] = [percent, percent];
-    }
-
-    effectsBoxRegistry.boxes.push(effectsBox2);
-
-    function effectsTick() {
-      $(window).trigger('tick');
-      var t = setTimeout(effectsTick, 10);
-    }
-
-    effectsTick();
-  }
-
-
-  function createUser(ownerId, rowIndex, noteData, effectsData) {
-    var notesModel = createNotesModel(ownerId, noteData),
-        effectsModel = createEffectsModel(ownerId, effectsData),
-        ypos = getYPos(rowIndex);
-
-    for (var i = 0; i < MEASURES; ++i) {
-      var xpos = getXPos(i);
-      createMeasureNotesView(notesModel, i, xpos, ypos);
-      createMeasureEffectsView(effectsModel, i, xpos, ypos);
-    }
-  }
-
+      BOX_INNER_HEIGHT = 48,
+      LEFT_MARGIN = (CANVAS_WIDTH - (MEASURES * (BOX_OUTER_WIDTH + MEASURE_MARGIN))) / 2;
 
   function createNotesModel(ownerId, noteData) {
     var noteModelConfig = {
@@ -59,10 +18,10 @@
     };
 
     if(noteData) {
-     noteModelConfig.values = noteData;
+      noteModelConfig.values = noteData;
     }
 
-    return new Model(noteModelConfig);
+    return new ArrayModel(noteModelConfig);
   }
 
   function createMeasureNotesView(notesModel, i, xpos, ypos) {
@@ -98,16 +57,105 @@
       i,
       effectsModel);
     effectsBoxRegistry.boxes.push(effectsBox);
+  }
 
+  function createEffectsController(effectsModel, xpos, ypos) {
+  	return new EffectsController(xpos, ypos, BOX_OUTER_WIDTH*2+MEASURE_MARGIN, BOX_OUTER_HEIGHT*2+MEASURE_MARGIN, effectsModel);
+  }
+
+  function createUserModel(ownerId, userData) {
+    var userModel = new UserModel({
+      values: userData
+    });
+
+    return userModel;
+  }
+
+  function createUserView(userModel, ypos) {
+    var view = new UserView({
+      data: userModel,
+      ypos: (ypos + BOX_OUTER_HEIGHT - 10) + 'px'
+    });
   }
 
   function getYPos(rowIndex) {
-    return (rowIndex * (2 * (BOX_OUTER_HEIGHT +
-              2*MEASURE_MARGIN)) + 70);
+    return (rowIndex * (2 * (BOX_OUTER_HEIGHT + 2*MEASURE_MARGIN)) + 70);
   }
 
   function getXPos(colIndex) {
     return LEFT_MARGIN + colIndex * (BOX_OUTER_WIDTH + MEASURE_MARGIN);
+  }
+
+  function createUser(rowIndex, userData) {
+    var ownerId = userData.ownerId,
+        noteData = userData.notes,
+        notesModel = createNotesModel(ownerId, noteData),
+        effectsData = userData.effects,
+        effectsModel = createEffectsModel(ownerId, effectsData),
+        userModel = createUserModel(ownerId, userData),
+        ypos = getYPos(rowIndex);
+
+    createUserView(userModel, ypos);
+
+	var effectsController = createEffectsController(effectsModel, getXPos(MEASURES)+MEASURE_MARGIN, ypos);
+
+    for (var i = 0; i < MEASURES; ++i) {
+      var xpos = getXPos(i);
+      createMeasureNotesView(notesModel, i, xpos, ypos);
+      createMeasureEffectsView(effectsModel, i, xpos, ypos);
+    }
+  }
+
+
+  function createEditableEffectsBox() {
+    var effectsData = new EffectsData(1, MEASURES, NOTES_PER_MEASURE);
+    var effectsBox = new EffectsBox(400, 400, BOX_OUTER_WIDTH,
+      BOX_OUTER_HEIGHT, 0, effectsData);
+
+    for (var i=0; i<effectsData.notesPerBox*effectsData.unitsPerNote; i++) {
+      var percent = i/(effectsData.notesPerBox*effectsData.unitsPerNote);
+      effectsData.values[i] = [percent, percent];
+    }
+
+    effectsBoxRegistry.boxes.push(effectsBox);
+  }
+
+  function startTick() {
+    function effectsTick() {
+      $(window).trigger('tick');
+    }
+
+    effectsTick();
+    setInterval(effectsTick, 10);
+  }
+
+  function main() {
+    window.paper = Raphael('canvas', CANVAS_WIDTH, 600);
+
+    createUser(0, {
+      ownerId: 0,
+      name: 'Jeremy',
+      mute: false,
+      solo: true,
+      notes: {},
+      effects: {}
+    });
+
+    var fakeNoteData = [], i;
+    for (i = 0; i < TOTAL_BEATS; ++i) {
+      fakeNoteData[i] = ~~(Math.random() * 10);
+    }
+    createUser(1, {
+      ownerId: 1,
+      name: 'Dan',
+      mute: false,
+      solo: false,
+      notes: fakeNoteData,
+      effects: {}
+    });
+
+    createEditableEffectsBox();
+    startTick();
   }
 
   $(main);
