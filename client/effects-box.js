@@ -2,10 +2,7 @@
 //		EffectsData model
 //
 
-<<<<<<< HEAD
-// there is one EffectsData model per user, which keeps track of the effects values
-function EffectsData(ownerId) {
-=======
+
 function EffectsBoxRegistry() {
 	this.boxes = [];
 }
@@ -16,7 +13,6 @@ effectsBoxRegistry = new EffectsBoxRegistry();
 function EffectsData(ownerId) {
 	var that = this;
 
->>>>>>> jeremy
 	this.unitsPerNote = 8;
 	this.notesPerBox = 4;
 	this.numBoxes = 8;
@@ -32,9 +28,6 @@ function EffectsData(ownerId) {
 		this.values[i] = [0.5, 0.5];
 	}
 
-<<<<<<< HEAD
-//	this.get
-=======
 	this.getValues = function(boxInd) {
 		if (boxInd < 0 || boxInd >= this.numBoxes) {
 			return [];
@@ -60,7 +53,6 @@ function EffectsData(ownerId) {
 			that.setVal(i+ind*that.unitsPerNote*that.notesPerBox, values[i], shouldUpdate);
 		}
 	};
->>>>>>> jeremy
 }
 
 EffectsData.prototype = new EventEmitter();
@@ -75,11 +67,7 @@ EffectsData.prototype.updateUI = function(ind) {
 // val: value to be set
 // ind: index of the value to be set
 // shouldUpdate: whether or not the UI should receive an update notification
-<<<<<<< HEAD
-EffectsData.prototype.setVal = function(val, ind, shouldUpdate) {
-=======
 EffectsData.prototype.setVal = function(ind, val, shouldUpdate) {
->>>>>>> jeremy
 	this.values[ind] = val;
 	if (shouldUpdate == true) {
 		this.updateUI(ind);
@@ -122,16 +110,6 @@ function EffectsBox(x, y, width, height, ind, data) {
 		fill: '90-#4477BB-#5588FF',
 		stroke: '#999999'
 	};
-<<<<<<< HEAD
-	this.mainBox.attr(mainBoxAttr);
-
-	this.effectsPoint = paper.rect(this.xpos/2 - 5, this.ypos/2 - 5, 10, 10, 1);
-
-	// box which handles all mouse events
-	var eventBox = paper.rect(this.xpos, this.ypos, this.width, this.height);
-	eventBox.drag(	effectsBoxDNDManager.dragStart.bind(effectsBoxDNDManager, this),
-					effectsBoxDNDManager.dragMove.bind(effectsBoxDNDManager, this),
-=======
 	this.mainBox.attr(this.mainBoxAttr);
 
 	this.effectsPoint = paper.rect(this.xpos + this.width/2 - 5, this.ypos + this.height/2 - 5, 10, 10, 1);
@@ -142,41 +120,19 @@ function EffectsBox(x, y, width, height, ind, data) {
 
 	eventBox.drag(	effectsBoxDNDManager.dragMove.bind(effectsBoxDNDManager, this),
 					effectsBoxDNDManager.dragStart.bind(effectsBoxDNDManager, this),
->>>>>>> jeremy
 					effectsBoxDNDManager.dragUp.bind(effectsBoxDNDManager, this));
 
 	this.shapes.push(this.mainBox, this.effectsPoint, eventBox);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> jeremy
 	data.on('update', function(val, ind) {
-		
+
 	});
 
 	this.enterDrop = function() {
 		that.mainBox.attr({stroke: "#00ff00"});
-<<<<<<< HEAD
-	}
-
-	this.leaveDrop = function() {
-		that.mainBox.attr(mainBoxAttr);
-	}
-
-	this.receiveDrop = function(box) {
-		var srcData = box.data;
-		var srcDataBegin = box.ind*
-
-		var destData = that.data;
-
-		
-	}
-=======
 	};
 
 	this.leaveDrop = function() {
 		that.mainBox.attr(that.mainBoxAttr);
 	};
->>>>>>> jeremy
 }
