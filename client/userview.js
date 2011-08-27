@@ -34,6 +34,15 @@ var UserView = (function() {
       me.bindField("name", onNameChange);
       me.bindField("mute", onMuteChange);
       me.bindField("solo", onSoloChange);
+
+      if(me.data.getVal("ownerId") === 0) {
+        me.root.find(".username").editable(function(value, settings) {
+          me.data.setVal("name", value);
+        }, {
+          type: "text",
+          submit: "OK"
+        });
+      }
     },
 
     draw: function() {
