@@ -48,10 +48,8 @@ var NotesBox = (function() {
       for (var j=0; j < NOTES; ++j) {
         var x = innerStartX + i * BEAT_WIDTH,
             y = innerStartY + j * NOTE_HEIGHT,
-            note = paper.rect(x, y, BEAT_WIDTH, NOTE_HEIGHT).attr({
-              fill: CLEAR_COLOR,
-              stroke: "none"
-            });
+            note = paper.rect(x, y, BEAT_WIDTH, NOTE_HEIGHT);
+            me.updateNoteDisplay(note, false);
 
         var node = note.node;
         // We pass the dataI and j so that we can set the model
@@ -141,15 +139,23 @@ var NotesBox = (function() {
 		  this.outer.attr({stroke: NORMAL_STROKE});
     },
 
+    updateNoteDisplay: function(note, selected) {
+      note.attr({
+        stroke: selected ? '#000000' : 'none',
+        /*'stroke-opacity': 0.5,*/
+        fill: selected ? SELECTED_COLOR : CLEAR_COLOR,
+        'fill-opacity': selected ? 1.0 : 0.001
+      });
+    },
+
     onModelUpdate: function(index, value) {
       var me=this,
           noteBoxes = me.noteBoxes[index];
 
       if (noteBoxes) {
         noteBoxes.forEach(function(note, j) {
-          note.attr({
-            fill: value === j ? SELECTED_COLOR : CLEAR_COLOR
-          });
+          var selected = value === j;
+          me.updateNoteDisplay(note, selected);
         });
       }
     },
