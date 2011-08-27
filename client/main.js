@@ -2,13 +2,14 @@ var paper;
 
 function main() {
 	paper = Raphael('canvas', 980, 600);
-  var model = new Model();
 
+  var model = new Model();
   new NotesBox({
     model: model,
+    modelOffset: 0,
     paper: paper,
-    startX: 0,
-    startY: 0
+    xpos: 30,
+    ypos: 30
   });
 
 	var effectsData1 = new EffectsData(0);
