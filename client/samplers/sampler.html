@@ -14,10 +14,15 @@
   </head>
   <body>
     <script>
-      // Setup shared variables
+      // tick is in ms
+      var tick = 120/60/4/8*1000;
       var sampleRate = 44100;
-      var bufferSize = 1024;
-      var bufferTime = Math.floor(1000 / (sampleRate / bufferSize));
+	
+      var bufferSize = Math.floor(tick/1000*sampleRate);
+      var bufferTime = tick; 
+
+      // var bufferSize = 1024;
+      // var bufferTime = Math.floor(1000 / (sampleRate / bufferSize));
       
       var amplitude  = 0.1; // Default amplitude at 70%
 
