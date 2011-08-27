@@ -4,13 +4,19 @@
 // well as the value.
 var Model = (function() {
 
-  var Model = function() {
-    this.values = [];
+  var Model = function(config) {
+    this.init(config);
   };
 
   Model.prototype = new EventEmitter();
   $.extend(Model.prototype, {
     constructor: Model,
+
+    init: function(config) {
+      this.values = [];
+
+      $.extend(this, config);
+    },
 
     // updates the UI. the UI element is responsible for determining
     // whether or not the current index should update the UI (i.e.
@@ -24,10 +30,14 @@ var Model = (function() {
     // ind: index of the value to be set
     // shouldUpdate: whether or not the UI should receive an update notification
     setVal: function(ind, val, shouldUpdate) {
-      this.values[ind] = val;
-      if (shouldUpdate !== false) {
-        this.emit("update", ind, val);
-        this.updateUI();
+      var me = this;
+
+      if(val !== me.values[ind]) {
+        me.values[ind] = val;
+        if (shouldUpdate !== false) {
+          me.emit("update", ind, val);
+          me.updateUI();
+        }
       }
     },
 
@@ -36,18 +46,25 @@ var Model = (function() {
       return this.values[ind];
     },
 
-    // gets all values
-    getAll: function() {
-      return this.values;
+    // gets a set of values starting at ind
+    getValues: function(ind) {
+      var me = this,
+          vals = [];
+      for(var i = 0, val; i < me.copySize; ++i) {
+        vals[i] = me.values[i+ind];
+      }
+      return vals;
     },
 
     // copy the given values, copy into locations starting at ind.
     // ind - index in the current data where to start copying into.
     // values - values to copy in.
     copy: function(ind, values) {
-      for (var i=0, value; value = values[i]; i++) {
-        var shouldUpdate = this.currentIndex == ind;
-        this.setVal(value, i+ind, shouldUpdate);
+      var me = this,
+          len = values.length;
+      for( var index = 0, value; index < len; ++index ) {
+        value = values[index];
+        me.setVal(index+ind, value, true);
       }
     }
   });

@@ -75,7 +75,7 @@ function BoxDNDManager(registry) {
 //				}
 				inBox = true;
 				break;
-			}		
+			}
 		}
 		if (!inBox && typeof that.destination !== 'undefined') {
 			that.destMouseLeave(that.destination, null);
@@ -89,7 +89,7 @@ function BoxDNDManager(registry) {
 
 		if (typeof that.destination !== 'undefined') {
 			var srcData = that.dragBox.data.getValues(that.dragBox.ind);
-			that.destination.data.receiveDrop(that.destination.ind, srcData);
+			that.destination.data.copy(that.destination.ind, srcData);
 			that.destMouseLeave(that.destination, null);
 		}
 
@@ -122,4 +122,5 @@ function BoxDNDManager(registry) {
 	};
 }
 
+notesBoxDNDManager = new BoxDNDManager(notesBoxRegistry);
 effectsBoxDNDManager = new BoxDNDManager(effectsBoxRegistry);

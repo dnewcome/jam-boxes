@@ -9,12 +9,12 @@ function EffectsBoxRegistry() {
 effectsBoxRegistry = new EffectsBoxRegistry();
 
 // there is one EffectsData model per user, which keeps track of the effects values
-function EffectsData(ownerId) {
+function EffectsData(ownerId, measures, notesPerMeasure) {
 	var that = this;
 
 	this.unitsPerNote = 8;
-	this.notesPerBox = 4;
-	this.numBoxes = 8;
+	this.notesPerBox = notesPerMeasure;
+	this.numBoxes = measures;
 
 	this.ownerId = ownerId;	// if owner is local user, ownerId = 0
 
@@ -73,7 +73,7 @@ function EffectsData(ownerId) {
 		return undefined;
 	}
 
-	this.receiveDrop = function(ind, values) {
+	this.copy = function(ind, values) {
 		var shouldUpdate = false;
 		if (that.currentIndex <= ind*that.unitsPerNote*that.notesPerBox &&
 			that.currentIndex >= (ind+1)*that.unitsPerNote*that.notesPerBox) {
@@ -83,6 +83,8 @@ function EffectsData(ownerId) {
 			that.setVal(i+ind*that.unitsPerNote*that.notesPerBox, values[i], shouldUpdate);
 		}
 	};
+
+  $(window).bind('tick', this.tick.bind(this));
 }
 
 EffectsData.prototype = new EventEmitter();
