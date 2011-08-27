@@ -87,6 +87,7 @@
   }
 
   function createUser(rowIndex, userData) {
+  	var that = this;
     var ownerId = userData.ownerId,
         noteData = userData.notes,
         notesModel = createNotesModel(ownerId, noteData),
@@ -97,7 +98,11 @@
 
     createUserView(userModel, ypos);
 
-	var effectsController = createEffectsController(effectsModel, getXPos(MEASURES)+MEASURE_MARGIN, ypos);
+	this.effectsController = createEffectsController(effectsModel, getXPos(MEASURES)+MEASURE_MARGIN, ypos);
+
+	if (ownerId === 0) {
+		$(window).bind("mouseup", that.effectsController.onMouseUp);
+	}
 
     for (var i = 0; i < MEASURES; ++i) {
       var xpos = getXPos(i);
