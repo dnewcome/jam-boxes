@@ -40,67 +40,75 @@
 
 
   function createUser(ownerId, rowIndex, noteData, effectsData) {
-    var notesModel = createNotesModel(ownerId, noteData);
-    var effectsModel = createEffectsModel(ownerId, effectsData);
-
-    var ypos = getYPos(rowIndex);
+    var notesModel = createNotesModel(ownerId, noteData),
+        effectsModel = createEffectsModel(ownerId, effectsData),
+        ypos = getYPos(rowIndex);
 
     for (var i = 0; i < MEASURES; ++i) {
       var xpos = getXPos(i);
-      var measureBox = new NotesBox({
-      	dndManager: notesBoxDNDManager,
-        data: notesModel,
-        ind: i * NOTES_PER_MEASURE,
-        notesPerMeasure: NOTES_PER_MEASURE,
-        paper: paper,
-        xpos: xpos,
-        ypos: ypos,
-        width: BOX_OUTER_WIDTH,
-        height: BOX_OUTER_HEIGHT,
-        innerWidth: BOX_INNER_WIDTH,
-        innerHeight: BOX_INNER_HEIGHT
-      });
-		  notesBoxRegistry.boxes.push(measureBox);
-
-      var effectsBox = new EffectsBox(
-        xpos,
-        ypos + BOX_OUTER_HEIGHT + MEASURE_MARGIN,
-        BOX_OUTER_WIDTH,
-        BOX_OUTER_HEIGHT,
-        i,
-        effectsModel);
-      effectsBoxRegistry.boxes.push(effectsBox);
-    }
-
-    function createNotesModel(ownerId, noteData) {
-      var noteModelConfig = {
-        ownerId: ownerId,
-        copySize: NOTES_PER_MEASURE
-      };
-
-      if(noteData) {
-       noteModelConfig.values = noteData;
-      }
-
-      return new Model(noteModelConfig);
-    }
-
-    function createEffectsModel(ownerId, effectsData) {
-      // TODO - make use of the effectsData once we have it.
-      return new EffectsData(ownerId, MEASURES, NOTES_PER_MEASURE);
-    }
-
-    function getYPos(rowIndex) {
-      return (rowIndex * (2 * (BOX_OUTER_HEIGHT +
-                2*MEASURE_MARGIN)) + 70);
-    }
-
-    function getXPos(colIndex) {
-      return LEFT_MARGIN + colIndex * (BOX_OUTER_WIDTH + MEASURE_MARGIN);
+      createMeasureNotesView(notesModel, i, xpos, ypos);
+      createMeasureEffectsView(effectsModel, i, xpos, ypos);
     }
   }
 
-  window.main = main;
+
+  function createNotesModel(ownerId, noteData) {
+    var noteModelConfig = {
+      ownerId: ownerId,
+      copySize: NOTES_PER_MEASURE
+    };
+
+    if(noteData) {
+     noteModelConfig.values = noteData;
+    }
+
+    return new Model(noteModelConfig);
+  }
+
+  function createMeasureNotesView(notesModel, i, xpos, ypos) {
+    var measureBox = new NotesBox({
+      dndManager: notesBoxDNDManager,
+      data: notesModel,
+      ind: i * NOTES_PER_MEASURE,
+      notesPerMeasure: NOTES_PER_MEASURE,
+      paper: paper,
+      xpos: xpos,
+      ypos: ypos,
+      width: BOX_OUTER_WIDTH,
+      height: BOX_OUTER_HEIGHT,
+      innerWidth: BOX_INNER_WIDTH,
+      innerHeight: BOX_INNER_HEIGHT
+    });
+    notesBoxRegistry.boxes.push(measureBox);
+
+    return measureBox;
+  }
+
+  function createEffectsModel(ownerId, effectsData) {
+    // TODO - make use of the effectsData once we have it.
+    return new EffectsData(ownerId, MEASURES, NOTES_PER_MEASURE);
+  }
+
+  function createMeasureEffectsView(effectsModel, i, xpos, ypos) {
+    var effectsBox = new EffectsBox(
+      xpos,
+      ypos + BOX_OUTER_HEIGHT + MEASURE_MARGIN,
+      BOX_OUTER_WIDTH,
+      BOX_OUTER_HEIGHT,
+      i,
+      effectsModel);
+    effectsBoxRegistry.boxes.push(effectsBox);
+
+  }
+
+  function getYPos(rowIndex) {
+    return (rowIndex * (2 * (BOX_OUTER_HEIGHT +
+              2*MEASURE_MARGIN)) + 70);
+  }
+
+  function getXPos(colIndex) {
+    return LEFT_MARGIN + colIndex * (BOX_OUTER_WIDTH + MEASURE_MARGIN);
+  }
 
   $(main);
 }());
