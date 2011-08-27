@@ -8,9 +8,10 @@ notesBoxRegistry = new NotesBoxRegistry();
 
 var NotesBox = (function() {
   var NOTES = 10;
-  var SELECTED_COLOR = '90-#66ddf3-#15bfde';
+  //var SELECTED_COLOR = '90-#66ddf3-#15bfde';
+  var SELECTED_COLOR = '90-#e63d91-#e128d9';
   var CLEAR_COLOR = '#fff';
-  var NORMAL_STROKE = '#15bfde';
+  var NORMAL_STROKE = '#e63d91';
   var NORMAL_STROKE_WIDTH = 2;
   var DROPPABLE_STROKE = '#ffffff';
   var DROPPABLE_STROKE_WIDTH = 4;
@@ -20,7 +21,7 @@ var NotesBox = (function() {
     var me = this,
         paper = me.paper,
         outer = me.outer = paper.rect(me.xpos, me.ypos, me.width, me.height,
-      10).attr({ fill: '90-#e128d9-#e63d91' });
+      10).attr({ fill: '90-#f1ff14-#f8ff8d' });
 
     me.leaveDrop();
 
