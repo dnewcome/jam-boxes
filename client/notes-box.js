@@ -137,6 +137,11 @@ var NotesBox = (function() {
       var me=this;
       me.ignorePaperClick = true;
       if (me.editable) {
+        var currVal = me.data.getVal(x);
+        // If same value, that means toggle it off.
+        if(currVal === y) {
+          y = undefined;
+        }
         me.data.setVal(x, y, true);
       }
       else {
