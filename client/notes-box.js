@@ -25,47 +25,31 @@ NotesBox = (function() {
     },
 
     draw: function() {
-      var me=this, paper=me.paper;
-      var set = me.set = paper.set();
+      var me=this, paper = me.paper, shapes = me.shapes;
+
       var outer = me.outer = paper.rect(me.startX, me.startY, OUTER_WIDTH, OUTER_HEIGHT,
-        10);
-      outer.attr({
+        10).attr({
         fill: '#fff'
       });
-      set.push(outer);
-      outer.toFront();
+
       var inner = paper.rect(INNER_X_OFFSET, INNER_Y_OFFSET, INNER_WIDTH, INNER_HEIGHT);
-      set.push(inner);
+      shapes.push(inner);
 
       for (var i=0; i < BEATS; i++) {
         for (var j=0; j < NOTES; j++) {
           var x = INNER_X_OFFSET + i * BEAT_WIDTH;
           var y = INNER_Y_OFFSET + j * NOTE_HEIGHT;
-          var item = paper.rect(x, y, BEAT_WIDTH, NOTE_HEIGHT);
-          item.attr({
+          var item = paper.rect(x, y, BEAT_WIDTH, NOTE_HEIGHT).attr({
             fill: '#fff'
           });
-          set.push(item);
+
+          shapes.push(inner);
         }
       }
 
-      set.mousedown(me.onStartDrag.bind(null, me));
-    },
-
-    onStartDrag: function(box, event) {
-      var me=box;
-      var origDX, origDY;
-      me.set.drag(function move(dx, dy) {
-        console.log("move dx: " + dx + " dy: " + dy);
-        me.set.translate(dx, dy);
-      },
-      function start(x, y) {
-        console.log("start");
-      },
-      function up() {
-        console.log("stop");
-      });
+      shapes.push(outer);
     }
+
   });
 
   return Box;

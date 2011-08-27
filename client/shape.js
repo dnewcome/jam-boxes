@@ -11,19 +11,20 @@ Shape.prototype = new EventEmitter();
 $.extend(Shape.prototype, {
   constructor: Shape,
   init: function() {
-    // references to drawn items within the control
-    // that may need to be deleted before a redraw
+    // All of the shapes.
     this.shapes = [];
     this.draw();
   },
 
   /**
-  * clear all drawing state from the control
+  * remove the widget and all of its elements
   */
-  clear: function () {
-    for( var i=0; i < this.shapes.length; i++ ) {
-      this.shapes[i].remove();
+  remove: function () {
+    for( var i=0, shape; shape = this.shapes[i]; i++ ) {
+      shape.remove();
     }
+
+    this.shapes = [];
   },
 
   /**
