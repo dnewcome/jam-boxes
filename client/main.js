@@ -1,7 +1,7 @@
 (function() {
   var MEASURES = 8,
       MEASURE_MARGIN = 10,
-      LEFT_MARGIN = 50,
+      LEFT_MARGIN = 196,
       BOX_OUTER_WIDTH = 48,
       BOX_OUTER_HEIGHT = 48,
       BOX_INNER_WIDTH = 36,
@@ -16,13 +16,16 @@
     var effectsData1 = new EffectsData(0);
 
     var effectsStart = 192;
-    for (var i=0; i<8; i++) {
-      var effectsBox1 = new EffectsBox(effectsStart+4+(48+8)*i, 250, 48, 48, i, effectsData1);
+    for (var i=0; i<MEASURES; i++) {
+      var effectsBox1 = new
+      EffectsBox(LEFT_MARGIN+(BOX_OUTER_WIDTH + MEASURE_MARGIN)*i, 250,
+        BOX_OUTER_WIDTH, BOX_OUTER_HEIGHT, i, effectsData1);
       effectsBoxRegistry.boxes.push(effectsBox1);
     }
 
     var effectsData2 = new EffectsData(1);
-    var effectsBox2 = new EffectsBox(400, 400, 48, 48, 0, effectsData2);
+    var effectsBox2 = new EffectsBox(400, 400, BOX_OUTER_WIDTH,
+      BOX_OUTER_HEIGHT, 0, effectsData2);
 
     for (var i=0; i<effectsData2.notesPerBox*effectsData2.unitsPerNote; i++) {
       var percent = i/(effectsData2.notesPerBox*effectsData2.unitsPerNote);
