@@ -10,12 +10,12 @@
   function main() {
     window.paper = Raphael('canvas', 980, 600);
 
-    var model = new Model();
+    var notesData = new Model();
 
     for (var i = 0; i < MEASURES; ++i) {
       new NotesBox({
-        model: model,
-        modelOffset: i * 4,
+        data: notesData,
+        dataOffset: i * 4,
         paper: paper,
         xpos: LEFT_MARGIN + i * (48 + MEASURE_MARGIN),
         ypos: 30,

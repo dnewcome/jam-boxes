@@ -36,8 +36,8 @@ var NotesBox = (function() {
 
     for (var i=0; i < BEATS; ++i) {
       // this is the offset into the model
-      var modelI = i + me.modelOffset;
-      noteBoxes[modelI] = [];
+      var dataI = i + me.dataOffset;
+      noteBoxes[dataI] = [];
       for (var j=0; j < NOTES; ++j) {
         var x = innerStartX + i * BEAT_WIDTH,
             y = innerStartY + j * NOTE_HEIGHT,
@@ -47,11 +47,11 @@ var NotesBox = (function() {
             });
 
         var node = note.node;
-        // We pass the modelI and j so that we can set the model
-        $(note.node).bind('click', me.onNoteClick.bind(me, modelI, j));
+        // We pass the dataI and j so that we can set the model
+        $(note.node).bind('click', me.onNoteClick.bind(me, dataI, j));
 
         shapes.push(note);
-        noteBoxes[modelI][j] = note;
+        noteBoxes[dataI][j] = note;
       }
     }
 
@@ -73,7 +73,7 @@ var NotesBox = (function() {
       Shape.prototype.init.call(this);
 
       $(me.paper.canvas).bind("click", me.onPaperClick.bind(me));
-      me.model.on("update", this.onModelUpdate.bind(this));
+      me.data.on("update", this.onModelUpdate.bind(this));
       this.setEditable(false);
     },
 
@@ -130,7 +130,7 @@ var NotesBox = (function() {
       var me=this;
       me.ignorePaperClick = true;
       if (me.editable) {
-        me.model.setVal(x, y, true);
+        me.data.setVal(x, y, true);
       }
       else {
         me.setEditable(true);
