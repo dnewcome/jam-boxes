@@ -28,6 +28,13 @@ AudioEngine.prototype.addSampler = function( s ) {
 	this.samplers.push( s );
 }
 
+AudioEngine.prototype.createSampler = function( wavfile ) {
+	var s = new Sampler(wavfile, this.bufferSize, this.sampleRate);
+	s.envelope = new ADSR(0, 0, 1, Infinity, 0, this.sampleRate);
+	// turn off so it does not trigger immediately
+	s.envelope.disable(); 
+	this.addSampler( s );
+}
 
 // Borrowed from F1LTER's code
 AudioEngine.midiNoteFreq = [
