@@ -1,5 +1,7 @@
 (function() {
   var MEASURES = 8,
+      NOTES_PER_MEASURE = 4,
+      TOTAL_BEATS = MEASURES * NOTES_PER_MEASURE,
       MEASURE_MARGIN = 10,
       LEFT_MARGIN = 215,
       BOX_OUTER_WIDTH = 60,
@@ -12,7 +14,7 @@
 
     createUser(0, 0);
     var fakeData = [];
-    for(var i = 0; i < 32; ++i) {
+    for (var i = 0; i < TOTAL_BEATS; ++i) {
       fakeData[i] = ~~(Math.random() * 10);
     }
     createUser(1, 1, fakeData);
@@ -20,7 +22,7 @@
     var effectsData1 = new EffectsData(0);
 
     var effectsStart = 192;
-    for (var i=0; i<MEASURES; i++) {
+    for (var i=0; i < MEASURES; i++) {
       var effectsBox1 = new
       EffectsBox(LEFT_MARGIN+(BOX_OUTER_WIDTH + MEASURE_MARGIN)*i, 250,
         BOX_OUTER_WIDTH, BOX_OUTER_HEIGHT, i, effectsData1);
@@ -49,7 +51,8 @@
 
   function createUser(ownerId, rowIndex, data) {
     var modelParams = {
-      ownerId: ownerId
+      ownerId: ownerId,
+      getWidth: NOTES_PER_MEASURE
     };
 
     if(data) {
@@ -60,7 +63,8 @@
     for (var i = 0; i < MEASURES; ++i) {
       var measureBox = new NotesBox({
         data: notesData,
-        ind: i * 4,
+        ind: i * NOTES_PER_MEASURE,
+        notesPerMeasure: NOTES_PER_MEASURE,
         paper: paper,
         xpos: LEFT_MARGIN + i * (BOX_OUTER_WIDTH + MEASURE_MARGIN),
         ypos: BOX_OUTER_HEIGHT * 1.5 + (rowIndex * (BOX_OUTER_HEIGHT + 20)),
