@@ -1,8 +1,6 @@
 /*globals EventEmitter: true */
 
-/*
-* A base shape.  To be shared among other shapes.
-*/
+// A base shape.  To be shared among other shapes.
 function Shape() {
   this.init.apply(this, arguments);
 }
@@ -17,9 +15,7 @@ $.extend(Shape.prototype, {
     this.draw();
   },
 
-  /**
-  * remove the widget and all of its elements
-  */
+  // remove the widget and all of its elements
   remove: function () {
     for( var i=0, shape; shape = this.shapes[i]; i++ ) {
       shape.remove();
@@ -28,9 +24,7 @@ $.extend(Shape.prototype, {
     this.shapes = [];
   },
 
-  /**
-  * Draw the control contents
-  */
+  // draw the control contents
   draw: function( val ) {
   }
 
