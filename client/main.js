@@ -69,10 +69,10 @@
   }
 
   function createUserView(userModel, ypos) {
-    var el = $("#canvas");
-    $('<div class="username">').text(userModel.getVal('name')).css({
-      top: (ypos + BOX_OUTER_HEIGHT - 10) + 'px'
-    }).appendTo(el);
+    var view = new UserView({
+      data: userModel,
+      ypos: (ypos + BOX_OUTER_HEIGHT - 10) + 'px'
+    });
   }
 
   function getYPos(rowIndex) {
