@@ -42,9 +42,9 @@ var Model = (function() {
     },
 
     // copy the given values, copy into locations starting at ind.
-    // values - values to copy in.
     // ind - index in the current data where to start copying into.
-    copy: function(values, ind) {
+    // values - values to copy in.
+    copy: function(ind, values) {
       for (var i=0, value; value = values[i]; i++) {
         var shouldUpdate = this.currentIndex == ind;
         this.setVal(value, i+ind, shouldUpdate);
