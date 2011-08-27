@@ -8,12 +8,12 @@ function main() {
 	});
 
 
-  var notesbox = new NotesBox();
-  notesbox.init({
+
+
+  new NotesBox({
     paper: paper,
     startX: 0,
     startY: 0
   });
 
-  notesbox.draw();
 }
