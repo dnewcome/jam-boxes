@@ -1,4 +1,7 @@
 /*globals EventEmitter: true, $: true */
+// A generic model.  The model is an array.  Every time data is changed in the
+// model, an update event is emitted with the index of the item that changed as
+// well as the value.
 var Model = (function() {
 
   var Model = function() {
@@ -22,7 +25,7 @@ var Model = (function() {
     // shouldUpdate: whether or not the UI should receive an update notification
     setVal: function(ind, val, shouldUpdate) {
       this.values[ind] = val;
-      if(shouldUpdate !== false) {
+      if (shouldUpdate !== false) {
         this.emit("update", ind, val);
         this.updateUI();
       }

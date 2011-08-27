@@ -29,7 +29,7 @@ var NotesBox = (function() {
 
       Shape.prototype.init.call(this);
 
-      me.model.on("update", this.updateNote.bind(this));
+      me.model.on("update", this.onModelUpdate.bind(this));
     },
 
     draw: function() {
@@ -68,15 +68,17 @@ var NotesBox = (function() {
       box.model.setVal(x, y, true);
     },
 
-    updateNote: function(index, value) {
+    onModelUpdate: function(index, value) {
       var me=this,
           noteBoxes = me.noteBoxes[index];
 
-      noteBoxes.forEach(function(note, j) {
-        note.attr({
-          fill: value === j ? SELECTED_COLOR : CLEAR_COLOR
+      if (noteBoxes) {
+        noteBoxes.forEach(function(note, j) {
+          note.attr({
+            fill: value === j ? SELECTED_COLOR : CLEAR_COLOR
+          });
         });
-      });
+      }
     }
 
   });
