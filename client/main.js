@@ -6,4 +6,14 @@ function main() {
     rect1.attr({
 		fill: '#ffffff'
 	});
+
+
+  var notesbox = new NotesBox();
+  notesbox.init({
+    paper: paper,
+    startX: 0,
+    startY: 0
+  });
+
+  notesbox.draw();
 }
