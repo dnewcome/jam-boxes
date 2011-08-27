@@ -6,6 +6,7 @@
   <script type="text/javascript" src="lib/raphael-min.js"></script>
   <script type="text/javascript" src="lib/events.js"></script>
   <script type="text/javascript" src="model.js"></script>
+  <script type="text/javascript" src="arraymodel.js"></script>
   <script type="text/javascript" src="shape.js"></script>
   <script type="text/javascript" src="effects-box.js"></script>
   <script type="text/javascript" src="notes-box.js"></script>
@@ -41,12 +42,15 @@
       height: 600px;
       margin: 0 auto;
       padding: 0 10px;
-   /*   background: -moz-linear-gradient(center top, #030303 0%, #2e2d2e 100%);
-      background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #030303), color-stop(1, #2e2d2e));
-      -moz-border-radius: 10px;
-      -webkit-border-radius: 10px;
-      border-radius: 10px;
-      */
+    }
+
+    #canvas {
+      position: relative;
+    }
+
+    #canvas > .username {
+      position: absolute;
+      left: 10px;
     }
   </style>
 </head>
