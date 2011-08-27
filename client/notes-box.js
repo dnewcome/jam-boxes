@@ -1,5 +1,11 @@
 /*globals Shape: true */
 
+function NotesBoxRegistry() {
+	this.boxes = [];
+}
+
+notesBoxRegistry = new NotesBoxRegistry();
+
 var NotesBox = (function() {
   var NOTES = 10;
   var SELECTED_COLOR = '#000';
@@ -70,7 +76,7 @@ var NotesBox = (function() {
 
       me.noteBoxes = [];
 
-      Shape.prototype.init.call(this);
+      Shape.prototype.init.call(this, config.dndManager);
 
       $(me.paper.canvas).bind("click", me.onPaperClick.bind(me));
       me.data.on("update", this.onModelUpdate.bind(this));

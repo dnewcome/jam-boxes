@@ -122,4 +122,5 @@ function BoxDNDManager(registry) {
 	};
 }
 
+notesBoxDNDManager = new BoxDNDManager(notesBoxRegistry);
 effectsBoxDNDManager = new BoxDNDManager(effectsBoxRegistry);

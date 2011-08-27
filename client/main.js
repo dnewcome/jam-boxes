@@ -62,6 +62,7 @@
 
     for (var i = 0; i < MEASURES; ++i) {
       var measureBox = new NotesBox({
+      	dndManager: notesBoxDNDManager,
         data: notesData,
         ind: i * NOTES_PER_MEASURE,
         notesPerMeasure: NOTES_PER_MEASURE,
@@ -73,7 +74,7 @@
         innerWidth: BOX_INNER_WIDTH,
         innerHeight: BOX_INNER_HEIGHT
       });
-		  effectsBoxRegistry.boxes.push(measureBox);
+		  notesBoxRegistry.boxes.push(measureBox);
     }
 
   }
