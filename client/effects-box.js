@@ -9,12 +9,12 @@ function EffectsBoxRegistry() {
 effectsBoxRegistry = new EffectsBoxRegistry();
 
 // there is one EffectsData model per user, which keeps track of the effects values
-function EffectsData(ownerId) {
+function EffectsData(ownerId, measures, notesPerMeasure) {
 	var that = this;
 
 	this.unitsPerNote = 8;
-	this.notesPerBox = 4;
-	this.numBoxes = 8;
+	this.notesPerBox = notesPerMeasure;
+	this.numBoxes = measures;
 
 	this.ownerId = ownerId;	// if owner is local user, ownerId = 0
 

@@ -19,7 +19,7 @@
     }
     createUser(1, 1, fakeData);
 
-    var effectsData1 = new EffectsData(0);
+    var effectsData1 = new EffectsData(0, MEASURES, NOTES_PER_MEASURE);
 
     var effectsStart = 192;
     for (var i=0; i < MEASURES; i++) {
@@ -29,7 +29,7 @@
       effectsBoxRegistry.boxes.push(effectsBox1);
     }
 
-    var effectsData2 = new EffectsData(1);
+    var effectsData2 = new EffectsData(1, MEASURES, NOTES_PER_MEASURE);
     var effectsBox2 = new EffectsBox(400, 400, BOX_OUTER_WIDTH,
       BOX_OUTER_HEIGHT, 0, effectsData2);
 
