@@ -17,13 +17,12 @@ var NotesBox = (function() {
     });
 
     $(outer.node).bind('click', me.onOuterClick.bind(me));
-    me.shapes.push(outer);
+    me.trackEl(outer);
   }
 
   function createInner() {
     var me = this,
         paper = me.paper,
-        shapes = me.shapes,
         noteBoxes = me.noteBoxes,
         innerXOffset = (me.width - me.innerWidth)/2,
         innerYOffset = (me.height - me.innerHeight)/2,
@@ -34,6 +33,7 @@ var NotesBox = (function() {
     var BEAT_WIDTH = me.innerWidth / BEATS;
     var NOTE_HEIGHT = me.innerHeight / NOTES;
 
+    me.trackEl(inner);
     for (var i=0; i < BEATS; ++i) {
       // this is the offset into the model
       var dataI = i + me.dataOffset;
@@ -50,12 +50,11 @@ var NotesBox = (function() {
         // We pass the dataI and j so that we can set the model
         $(note.node).bind('click', me.onNoteClick.bind(me, dataI, j));
 
-        shapes.push(note);
+        me.trackEl(note);
         noteBoxes[dataI][j] = note;
       }
     }
 
-    shapes.push(inner);
   }
 
 
