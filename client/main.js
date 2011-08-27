@@ -66,4 +66,6 @@
   }
 
   window.main = main;
+
+  $(main);
 }());
