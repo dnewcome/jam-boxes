@@ -211,7 +211,7 @@ function EffectsController(x, y, width, height, data) {
 	var eventBox = paper.rect(this.xpos, this.ypos, this.width, this.height);
 	eventBox.attr({fill: '#000000', 'fill-opacity': 0.01, stroke: 'none'});
 
-	
+	eventBox.node.onclick(funct
 
 	this.shapes.push(this.mainBox, this.effectsPoint, eventBox);
 
