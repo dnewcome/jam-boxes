@@ -1,17 +1,20 @@
-samplers = [];
 function AudioEngine() {
 	this.interval;
+	this.samplers = [];
 }
 
 AudioEngine.prototype.start = function() {
-	this.interval = setInterval(audioWriter, bufferTime); // start audioWriter timer      
+	var me = this;
+	this.interval = setInterval( function() { 	
+		me.audioWriter(); 
+	}, bufferTime ); 
 }
 AudioEngine.prototype.stop = function() {
 	clearInterval( this.interval );
 }
 
 AudioEngine.prototype.addSampler = function( s ) {
-	samplers.push( s );
+	this.samplers.push( s );
 }
       // tick is in ms
       var tick = 120/60/16/8*1000;
@@ -43,39 +46,41 @@ AudioEngine.prototype.addSampler = function( s ) {
 
 
 		var tick = 0;
-      var audioWriter = function() {
-       		if( tick % 8 == 0 && sequence1[ tick % 128 / 8 ] == 1 ) {
-				trigger( samplers[0] );
-			} 
-			/*
-       		if( tick % 8 == 0 && sequence2[ tick % 128 / 8 ] ) {
-				trigger( s2 );
-			} 
-			*/
 
-            var additiveSignal = new Float32Array(bufferSize);
-          
-			for( var i=0; i < samplers.length; i++ ) {
-				var s = samplers[i];
-				if ( s.envelope.isActive() ) {
-				  s.generate();
-				  mix( s.applyEnvelope(), additiveSignal );
-				}
-			}
-          
-              output.mozWriteAudio(additiveSignal);
+AudioEngine.prototype.audioWriter = function() {
+	if( tick % 8 == 0 && sequence1[ tick % 128 / 8 ] == 1 ) {
+		this.trigger( this.samplers[0] );
+	} 
+	/*
+	if( tick % 8 == 0 && sequence2[ tick % 128 / 8 ] ) {
+		trigger( s2 );
+	} 
+	*/
 
-			tick++;
-         }
-		function trigger( sampler ) {
-          sampler.envelope.noteOn();
-          sampler.setFreq(440);
-      
-			setTimeout( function() {
-			  sampler.envelope.noteOff();
-				sampler.reset();
-			}, 1000);
-		  }
+	var additiveSignal = new Float32Array(bufferSize);
+  
+	for( var i=0; i < this.samplers.length; i++ ) {
+		var s = this.samplers[i];
+		if ( s.envelope.isActive() ) {
+		  s.generate();
+		  mix( s.applyEnvelope(), additiveSignal );
+		}
+	}
+  
+	  output.mozWriteAudio(additiveSignal);
+
+	tick++;
+};
+
+AudioEngine.prototype.trigger = function( sampler ) {
+  sampler.envelope.noteOn();
+  sampler.setFreq(440);
+
+	setTimeout( function() {
+	  sampler.envelope.noteOff();
+		sampler.reset();
+	}, 1000);
+  }
 
       
 	// mix buf1 into buf2
