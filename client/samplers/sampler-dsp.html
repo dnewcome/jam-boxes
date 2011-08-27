@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 	<head>
-		<script src="dsp.js/dsp.js" type="text/javascript"></script>
+		<script src="../lib/dsp.js" type="text/javascript"></script>
 		<script>
       var sampleRate = 44100;
       var bufferSize = 1024;
@@ -15,7 +15,7 @@
       var noteOn = [];
       var playSample = false;
 			
-			  var s = new Sampler('audio/1.wav', bufferSize, sampleRate);
+			  var s = new Sampler('../audio/cymbal-hihat-stick.wav', bufferSize, sampleRate);
 			  s.envelope = new ADSR(0, 0, 1, Infinity, 0, sampleRate);
 			  s.envelope.disable(); // turn off so it does not auto trigger
 

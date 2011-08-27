@@ -2,12 +2,10 @@
 <html>
   <head>
     <!-- Load JQuery and JQuery-UI -->
-    <link type="text/css" href="css/hot-sneaks/jquery-ui-1.8.custom.css" rel="stylesheet" />  
-    <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.8.custom.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery-1.6.2.min.js"></script>
 
     <!-- Load DSP.js -->
-    <script src="../../dsp.js"></script>
+    <script src="../lib/dsp.js"></script>
     <script>
     </script>
 
@@ -22,8 +20,9 @@
 		// tick is control rate. .125*beat
 		var tick = 120/60/4/8*1000;
 		console.log( tick );
-      var bufferSize = Math.floor(tick*44100);
+      var bufferSize = Math.floor(tick/1000*44100);
       var bufferTime = tick; // Math.floor(1000 / (sampleRate / bufferSize));
+	console.log( 'buffer size :' + bufferSize );
       
       var amplitude  = 0.1; // Default amplitude at 70%
 
@@ -59,17 +58,16 @@
       var programStart;
       var writeCount = 0; 
 
-      var s = new Sampler('audio/1.wav', bufferSize, sampleRate);
+      var s = new Sampler('../audio/cymbal-hihat-stick.wav', bufferSize, sampleRate);
       s.envelope = new ADSR(0, 0, 1, Infinity, 0, sampleRate);
       s.envelope.disable(); // turn off so it does not auto trigger
       
       var audioWriter = function() {
-		console.log('audiowriter');
         if (s.loaded) {
           if ( programStart === undefined ) {
              programStart = new Date();
           }
-        
+       		//	trigger(); 
 			if( tick % 8 == 0 ) {
 				trigger();
 			}
@@ -89,11 +87,11 @@
             */
 
             // Flush buffer  
-            output.mozWriteAudio([]);
+            // output.mozWriteAudio([]);
           
             if (additiveSignal) {
               // Write next audio frame
-              output.mozWriteAudio(additiveSignal);
+              console.log( output.mozWriteAudio(additiveSignal) );
 
             }
             writeCount++;
