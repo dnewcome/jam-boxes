@@ -10,7 +10,9 @@
   function main() {
     window.paper = Raphael('canvas', 980, 600);
 
-    var notesData = new Model();
+    var notesData = new Model({
+      ownerId: 0
+    });
 
     for (var i = 0; i < MEASURES; ++i) {
       var measureBox = new NotesBox({

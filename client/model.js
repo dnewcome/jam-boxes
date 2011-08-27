@@ -4,14 +4,19 @@
 // well as the value.
 var Model = (function() {
 
-  var Model = function() {
-    this.ownerId = 0;
-    this.values = [];
+  var Model = function(config) {
+    this.init(config);
   };
 
   Model.prototype = new EventEmitter();
   $.extend(Model.prototype, {
     constructor: Model,
+
+    init: function(config) {
+      this.values = [];
+
+      $.extend(this, config);
+    },
 
     // updates the UI. the UI element is responsible for determining
     // whether or not the current index should update the UI (i.e.
