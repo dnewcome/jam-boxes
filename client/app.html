@@ -27,7 +27,7 @@
       position: relative;
     }
 
-    #canvas > .username {
+    #canvas > .user {
       position: absolute;
       left: 10px;
       color: #fff;
@@ -58,6 +58,18 @@
   <script type="text/javascript" src="userview.js"></script>
   <script type="text/javascript" src="dnd-manager.js"></script>
   <script type="text/javascript" src="main.js"></script>
+
+  <script type="text/html" id="userInfoTemplate">
+    <div class="user">
+      <div class="username"></div>
+      <p>
+        <label for="mute">Mute:</label><input type="checkbox" name="mute" value="mute" />
+      </p>
+      <p>
+        <label for="solo">Solo:</label><input type="checkbox" name="solo" value="solo" />
+      </p>
+    </div>
+  </script>
 
 </body>
 </html>

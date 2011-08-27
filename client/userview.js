@@ -2,22 +2,38 @@
 var UserView = (function() {
 
   function onNameChange(key, value) {
-
+    var me=this;
+    me.root.find('.username').text(value);
   }
 
-  var View = function(config) {
-    if(config) {
-      this.init(config);
-    }
+  function onMuteChange(key, value) {
+    var me=this;
+    me.root.find('[name=mute]').attr({
+      checked: value
+    });
+  }
+
+  function onSoloChange(key, value) {
+    var me=this;
+    me.root.find('[name=solo]').attr({
+      checked: value
+    });
+  }
+
+  var UserView = function(config) {
+    View.prototype.constructor.apply(this, arguments);
   };
 
-  View.prototype = new EventEmitter();
-  $.extend(View.prototype, {
+  UserView.prototype = new View();
+  $.extend(UserView.prototype, {
+    constructor: UserView,
     init: function(config) {
       var me=this;
-      $.extend(me, config);
-      this.draw();
-      me.data.on("update:name", onNameChange.bind(me));
+      View.prototype.init.call(me, config);
+
+      me.bindField("name", onNameChange);
+      me.bindField("mute", onMuteChange);
+      me.bindField("solo", onSoloChange);
     },
 
     draw: function() {
@@ -25,13 +41,13 @@ var UserView = (function() {
           data = me.data,
           el = $("#canvas");
 
-      $('<div class="username">').text(data.getVal('name')).css({
+      var template = $("#userInfoTemplate").html();
+      me.root = $(template).appendTo(el).css({
         top: me.ypos
-      }).appendTo(el);
-
+      });
     }
   });
 
-  return View;
+  return UserView;
 }());
 

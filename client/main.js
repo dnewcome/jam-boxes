@@ -131,7 +131,7 @@
       ownerId: 0,
       name: 'Jeremy',
       mute: false,
-      solo: false,
+      solo: true,
       notes: {},
       effects: {}
     });
