@@ -73,7 +73,7 @@ function EffectsData(ownerId) {
 		return undefined;
 	}
 
-	this.receiveDrop = function(ind, values) {
+	this.copy = function(ind, values) {
 		var shouldUpdate = false;
 		if (that.currentIndex <= ind*that.unitsPerNote*that.notesPerBox &&
 			that.currentIndex >= (ind+1)*that.unitsPerNote*that.notesPerBox) {
