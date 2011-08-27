@@ -49,7 +49,7 @@ var Model = (function() {
     // gets a set of values starting at ind
     getValues: function(ind) {
       var vals = [];
-      for(var i = 0, val; i < 4; ++i) {
+      for(var i = 0, val; i < this.getWidth; ++i) {
         vals[i] = this.values[i+ind];
       }
       return vals;

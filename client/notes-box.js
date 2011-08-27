@@ -1,7 +1,6 @@
 /*globals Shape: true */
 
 var NotesBox = (function() {
-  var BEATS = 4;
   var NOTES = 10;
   var SELECTED_COLOR = '#000';
   var CLEAR_COLOR = '#fff';
@@ -32,11 +31,11 @@ var NotesBox = (function() {
         innerStartY = me.ypos + innerYOffset,
         inner = paper.rect(innerStartX, innerStartY, me.innerWidth, me.innerHeight);
 
-    var BEAT_WIDTH = me.innerWidth / BEATS;
+    var BEAT_WIDTH = me.innerWidth / me.notesPerMeasure;
     var NOTE_HEIGHT = me.innerHeight / NOTES;
 
     me.trackEl(inner);
-    for (var i=0; i < BEATS; ++i) {
+    for (var i=0; i < me.notesPerMeasure; ++i) {
       // this is the offset into the model
       var dataI = i + me.ind;
       noteBoxes[dataI] = [];
