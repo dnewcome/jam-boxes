@@ -1,0 +1,7 @@
+Repository for JAM BOXES. Only works in Firefox 4 or newer (sorry).
+
+Team:
+
+Jeremy Flores
+Dan Newcome
+Shane Tomlinson
