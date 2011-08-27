@@ -2,6 +2,12 @@
 //		EffectsData model
 //
 
+function EffectsBoxRegistry() {
+	this.boxes = [];
+}
+
+effectsBoxRegistry = new EffectsBoxRegistry();
+
 // there is one EffectsData model per user, which keeps track of the effects values
 function EffectsData(ownerId) {
 	var that = this;
@@ -42,7 +48,7 @@ function EffectsData(ownerId) {
 			if (that.currentIndex == ind) {
 				shouldUpdate = true;
 			}
-			that.data.setVal(values[i], i+ind, shouldUpdate);
+			that.setVal(values[i], i+ind, shouldUpdate);
 		}
 	};
 }
@@ -110,12 +116,11 @@ function EffectsBox(x, y, width, height, ind, data) {
 	var eventBox = paper.rect(this.xpos, this.ypos, this.width, this.height);
 	eventBox.attr({fill: '#000000', 'fill-opacity': 0.01});
 
-	eventBox.drag(	effectsBoxDNDManager.dragStart.bind(effectsBoxDNDManager, this),
-					effectsBoxDNDManager.dragMove.bind(effectsBoxDNDManager, this),
+	eventBox.drag(	effectsBoxDNDManager.dragMove.bind(effectsBoxDNDManager, this),
+					effectsBoxDNDManager.dragStart.bind(effectsBoxDNDManager, this),
 					effectsBoxDNDManager.dragUp.bind(effectsBoxDNDManager, this));
 
 	this.shapes.push(this.mainBox, this.effectsPoint, eventBox);
-
 
 	data.on('update', function(val, ind) {
 		

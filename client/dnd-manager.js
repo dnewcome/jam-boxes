@@ -1,3 +1,26 @@
+function rectIntersect(rect1, rect2) {
+		var left1 = rect1.xpos;
+		var top1 = rect1.ypos;
+		var right1 = rect1.xpos+rect1.width;
+		var bottom1 = rect1.ypos+rect1.height;
+
+		var left2 = rect2.xpos;
+		var top2 = rect2.ypos;
+		var right2 = rect2.xpos+rect2.width;
+		var bottom2 = rect2.ypos+rect2.height;
+
+		var doesIntersect = 	((left2 < right1) &&
+							(right2 > left1) &&
+							(top2 < bottom1) &&
+							(bottom2 > top1));
+		if (doesIntersect) {
+			return true;
+		}
+		else {
+			return false;
+		}
+}
+
 function BoxDNDManager() {
 	var that = this;
 
@@ -25,7 +48,7 @@ function BoxDNDManager() {
 			that.ghost.shapes[i].attr({opacity: 0.2});
 			that.ghostBBoxes[i] = that.ghost.shapes[i].getBBox();
 		}
-	}
+	};
 
 	this.dragMove = function(box, dx, dy) {
 		if (box != that.dragBox) {
@@ -37,7 +60,30 @@ function BoxDNDManager() {
 			var bbox = that.ghostBBoxes[i];
 			obj.attr({ x: bbox.x + dx, y: bbox.y + dy });
 		}
-	}
+
+		var inBox = false;
+		for (var i=0; i<effectsBoxRegistry.boxes.length; i++) {
+			var xloc = that.dragBox.xpos+dx;
+			var yloc = that.dragBox.ypos+dy;
+
+			var destBox = effectsBoxRegistry.boxes[i];
+			if (destBox == that.dragBox) {
+				continue;
+			}
+			console.log(destBox.data.ownerId);
+			if (rectIntersect({xpos: xloc, ypos: yloc, width: that.dragBox.width, height: that.dragBox.height},
+				{xpos: destBox.xpos, ypos: destBox.ypos, width: destBox.width, height: destBox.height})) {
+				if (typeof that.destination === 'undefined') {
+					that.destMouseEnter(destBox, null);
+				}
+				inBox = true;
+				break;
+			}		
+		}
+		if (!inBox && typeof that.destination !== 'undefined') {
+			that.destMouseLeave(that.destination, null);
+		}
+	};
 
 	this.dragUp = function(box) {
 		if (box != that.dragBox) {
@@ -47,6 +93,7 @@ function BoxDNDManager() {
 		if (typeof that.destination !== 'undefined') {
 			var srcData = that.dragBox.data.getValues(that.dragBox.ind);
 			that.destination.data.receiveDrop(srcData, that.dragBox.ind);
+			that.destMouseLeave(that.destination, null);
 		}
 
 		// remove the ghost from the screen
@@ -58,21 +105,21 @@ function BoxDNDManager() {
 		that.ghost = undefined;
 		that.ghostBBoxes = [];
 		that.destination = undefined;
-	}
+	};
 
-	this.destMouseEnter = function(box) {
-		if (that.dragBox != box && box.data.ownerId === 1) {	// make sure destination != source and that the user owns the destination
+	this.destMouseEnter = function(box, event) {
+		if (typeof that.dragBox !== 'undefined' && that.dragBox != box && box.data.ownerId === 0) {	// make sure destination != source and that the user owns the destination
 			that.destination = box;
 			that.destination.enterDrop();
 		}
-	}
+	};
 
-	this.destMouseLeave = function(box) {
+	this.destMouseLeave = function(box, event) {
 		if (that.destination !== undefined) {
 			that.destination.leaveDrop();
 			that.destination = undefined;
 		}
-	}
+	};
 }
 
 effectsBoxDNDManager = new BoxDNDManager();
