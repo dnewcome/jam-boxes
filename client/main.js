@@ -1,4 +1,4 @@
-/*globals Raphael: true, Model: true, ArrayModel: true, NotesBox: true, EffectsData: true, EffectsBox: true, paper: true, notesBoxDNDManager: true, notesBoxRegistry: true, effectsBoxRegistry: true*/
+/*globals Raphael: true, Model: true, ArrayModel: true, NotesBox: true, EffectsData: true, EffectsBox: true, paper: true, notesBoxDNDManager: true, notesBoxRegistry: true, effectsBoxRegistry: true, UserModel: true*/
 (function() {
   var MEASURES = 8,
       NOTES_PER_MEASURE = 4,
@@ -18,18 +18,10 @@
     };
 
     if(noteData) {
-     noteModelConfig.values = noteData;
+      noteModelConfig.values = noteData;
     }
 
     return new ArrayModel(noteModelConfig);
-  }
-
-  function createName(ownerId, ypos, rowIndex) {
-    var el = $("#canvas");
-    $('<div class="username">').text("User" + ownerId).css({
-      top: (ypos + BOX_OUTER_HEIGHT - 10) + 'px'
-    }).appendTo(el);
-
   }
 
   function createMeasureNotesView(notesModel, i, xpos, ypos) {
@@ -68,21 +60,39 @@
 
   }
 
+  function createUserModel(ownerId, userData) {
+    var userModel = new UserModel({
+      values: userData
+    });
+
+    return userModel;
+  }
+
+  function createUserView(userModel, ypos) {
+    var el = $("#canvas");
+    $('<div class="username">').text(userModel.getVal('name')).css({
+      top: (ypos + BOX_OUTER_HEIGHT - 10) + 'px'
+    }).appendTo(el);
+  }
+
   function getYPos(rowIndex) {
-    return (rowIndex * (2 * (BOX_OUTER_HEIGHT +
-              2*MEASURE_MARGIN)) + 70);
+    return (rowIndex * (2 * (BOX_OUTER_HEIGHT + 2*MEASURE_MARGIN)) + 70);
   }
 
   function getXPos(colIndex) {
     return LEFT_MARGIN + colIndex * (BOX_OUTER_WIDTH + MEASURE_MARGIN);
   }
 
-  function createUser(ownerId, rowIndex, noteData, effectsData) {
-    var notesModel = createNotesModel(ownerId, noteData),
+  function createUser(rowIndex, userData) {
+    var ownerId = userData.ownerId,
+        noteData = userData.notes,
+        notesModel = createNotesModel(ownerId, noteData),
+        effectsData = userData.effects,
         effectsModel = createEffectsModel(ownerId, effectsData),
+        userModel = createUserModel(ownerId, userData),
         ypos = getYPos(rowIndex);
 
-    createName(ownerId, ypos, rowIndex);
+    createUserView(userModel, ypos);
 
     for (var i = 0; i < MEASURES; ++i) {
       var xpos = getXPos(i);
@@ -92,36 +102,56 @@
   }
 
 
+  function createEditableEffectsBox() {
+    var effectsData = new EffectsData(1, MEASURES, NOTES_PER_MEASURE);
+    var effectsBox = new EffectsBox(400, 400, BOX_OUTER_WIDTH,
+      BOX_OUTER_HEIGHT, 0, effectsData);
+
+    for (var i=0; i<effectsData.notesPerBox*effectsData.unitsPerNote; i++) {
+      var percent = i/(effectsData.notesPerBox*effectsData.unitsPerNote);
+      effectsData.values[i] = [percent, percent];
+    }
+
+    effectsBoxRegistry.boxes.push(effectsBox);
+  }
+
+  function startTick() {
+    function effectsTick() {
+      $(window).trigger('tick');
+    }
+
+    effectsTick();
+    setInterval(effectsTick, 10);
+  }
 
   function main() {
     window.paper = Raphael('canvas', CANVAS_WIDTH, 600);
 
-    createUser(0, 0);
-    var fakeData = [], i;
+    createUser(0, {
+      ownerId: 0,
+      name: 'Jeremy',
+      mute: false,
+      solo: false,
+      notes: {},
+      effects: {}
+    });
+
+    var fakeNoteData = [], i;
     for (i = 0; i < TOTAL_BEATS; ++i) {
-      fakeData[i] = ~~(Math.random() * 10);
+      fakeNoteData[i] = ~~(Math.random() * 10);
     }
-    createUser(1, 1, fakeData);
+    createUser(1, {
+      ownerId: 1,
+      name: 'Dan',
+      mute: false,
+      solo: false,
+      notes: fakeNoteData,
+      effects: {}
+    });
 
-    var effectsData2 = new EffectsData(1, MEASURES, NOTES_PER_MEASURE);
-    var effectsBox2 = new EffectsBox(400, 400, BOX_OUTER_WIDTH,
-      BOX_OUTER_HEIGHT, 0, effectsData2);
-
-    for (i=0; i<effectsData2.notesPerBox*effectsData2.unitsPerNote; i++) {
-      var percent = i/(effectsData2.notesPerBox*effectsData2.unitsPerNote);
-      effectsData2.values[i] = [percent, percent];
-    }
-
-    effectsBoxRegistry.boxes.push(effectsBox2);
-
-    function effectsTick() {
-      $(window).trigger('tick');
-      var t = setTimeout(effectsTick, 10);
-    }
-
-    effectsTick();
+    createEditableEffectsBox();
+    startTick();
   }
-
 
   $(main);
 }());
