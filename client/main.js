@@ -1,7 +1,7 @@
 (function() {
   var MEASURES = 8,
       MEASURE_MARGIN = 10,
-      LEFT_MARGIN = 196,
+      LEFT_MARGIN = 265,
       BOX_OUTER_WIDTH = 48,
       BOX_OUTER_HEIGHT = 48,
       BOX_INNER_WIDTH = 36,
