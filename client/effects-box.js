@@ -2,7 +2,6 @@
 //		EffectsData model
 //
 
-
 function EffectsBoxRegistry() {
 	this.boxes = [];
 }
@@ -43,6 +42,37 @@ function EffectsData(ownerId) {
 		return indices;
 	};
 
+	this.indexInBox = function(ind, boxInd) {
+		if (boxInd < 0 || boxInd >= this.numBoxes) {
+			return false;
+		}
+
+		var begin = boxInd*that.unitsPerNote*that.notesPerBox;
+		var end = begin + that.unitsPerNote*that.notesPerBox;
+
+		if (ind >= begin && ind < end) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	};
+
+	this.boxForIndex = function(ind) {
+		if (ind < 0 || ind >= that.numValues) {
+			return undefined;
+		}
+
+		for (var i=0; i<that.numBoxes; i++) {
+			var begin = i*that.notesPerBox*that.unitsPerNote;
+			var end = (i+1)*that.notesPerBox*that.unitsPerNote;
+			if (ind >= begin && ind < end) {
+				return i;
+			}
+		}
+		return undefined;
+	}
+
 	this.receiveDrop = function(ind, values) {
 		var shouldUpdate = false;
 		if (that.currentIndex <= ind*that.unitsPerNote*that.notesPerBox &&
@@ -57,11 +87,13 @@ function EffectsData(ownerId) {
 
 EffectsData.prototype = new EventEmitter();
 
-// updates the UI. the UI element is responsible for determining whether or not the current index
-// should update the UI (i.e. if there is an EffectsBox whose index range does not include the currentIndex)
-EffectsData.prototype.updateUI = function(ind) {
+EffectsData.prototype.tick = function() {
 	this.currentIndex = this.currentIndex+1;
-	this.emit('update', ind, this.values[ind]);
+	if (this.currentIndex >= this.numValues) {
+		this.currentIndex = 0;
+	}
+
+	this.emit('update', this.currentIndex, this.values[this.currentIndex]);
 }
 
 // val: value to be set
@@ -70,7 +102,7 @@ EffectsData.prototype.updateUI = function(ind) {
 EffectsData.prototype.setVal = function(ind, val, shouldUpdate) {
 	this.values[ind] = val;
 	if (shouldUpdate == true) {
-		this.updateUI(ind);
+		this.emit('update', this.currentIndex, this.values[this.currentIndex]);
 	}
 };
 
@@ -107,16 +139,16 @@ function EffectsBox(x, y, width, height, ind, data) {
 		stroke: '#777777'
 		};
 	this.mainBoxAttrHighlight = {
-		fill: '90-#4477BB-#5588FF',
-		stroke: '#999999'
+		fill: '90-#4477BB-#5588FF'
 	};
 	this.mainBox.attr(this.mainBoxAttr);
 
-	this.effectsPoint = paper.rect(this.xpos + this.width/2 - 5, this.ypos + this.height/2 - 5, 10, 10, 1);
+	this.effectsPoint = paper.rect(this.xpos + 0.5*(this.width-16) + 5, this.ypos + 0.5*(this.width-16) + 5, 10, 10, 5);
+	this.effectsPoint.attr({fill: '#ffffff', stroke: '#ffffff'});
 
 	// box which handles all mouse events
 	var eventBox = paper.rect(this.xpos, this.ypos, this.width, this.height);
-	eventBox.attr({fill: '#000000', 'fill-opacity': 0.01});
+	eventBox.attr({fill: '#000000', 'fill-opacity': 0.01, stroke: 'none'});
 
 	eventBox.drag(	effectsBoxDNDManager.dragMove.bind(effectsBoxDNDManager, this),
 					effectsBoxDNDManager.dragStart.bind(effectsBoxDNDManager, this),
@@ -124,8 +156,18 @@ function EffectsBox(x, y, width, height, ind, data) {
 
 	this.shapes.push(this.mainBox, this.effectsPoint, eventBox);
 
-	data.on('update', function(val, ind) {
-
+	data.on('update', function(ind, val) {
+		if (that.data.boxForIndex(ind) == that.ind) {
+			if (that.mainBox.attrs.fill != that.mainBoxAttrHighlight.fill) {
+				that.mainBox.attr({fill: that.mainBoxAttrHighlight.fill});
+			}
+			var newX = that.xpos + val[0]*(that.width-16) + 5;
+			var newY = that.ypos + val[1]*(that.height-16) + 5;
+			that.effectsPoint.attr({x: newX, y: newY});
+		}
+		else {
+			that.mainBox.attr({fill: that.mainBoxAttr.fill});
+		}
 	});
 
 	this.enterDrop = function() {
