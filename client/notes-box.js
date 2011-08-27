@@ -1,4 +1,6 @@
-NotesBox = (function() {
+/*globals Shape: true */
+
+var NotesBox = (function() {
   var BEATS = 4;
   var NOTES = 10;
   var OUTER_WIDTH = 48;
@@ -41,13 +43,17 @@ NotesBox = (function() {
           var y = INNER_Y_OFFSET + j * NOTE_HEIGHT;
           var item = paper.rect(x, y, BEAT_WIDTH, NOTE_HEIGHT).attr({
             fill: '#fff'
-          });
+          }).click(me.onNoteClick.bind(this));
 
-          shapes.push(inner);
+          shapes.push(item);
         }
       }
 
       shapes.push(outer);
+    },
+
+    onNoteClick: function(event) {
+      var target = event.target;
     }
 
   });
