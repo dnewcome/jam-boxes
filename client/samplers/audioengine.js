@@ -1,6 +1,7 @@
 function AudioEngine() {
 	this.interval;
 	this.samplers = [];
+	this.sequences = {};
 
 	this.sampleRate = 44100;
 	// tick length is hard coded to 120bpm
@@ -24,16 +25,22 @@ AudioEngine.prototype.stop = function() {
 	clearInterval( this.interval );
 }
 
-AudioEngine.prototype.addSampler = function( s ) {
-	this.samplers.push( s );
+AudioEngine.prototype.addSampler = function( name, sampler ) {
+	sampler.name = name;
+	this.samplers.push( sampler );
 }
 
-AudioEngine.prototype.createSampler = function( wavfile ) {
+/**
+ * convenience method for creating a new sampler and 
+ * adding it to the list of audio generators.
+ * The name is used when looking for performance data
+ */
+AudioEngine.prototype.createSampler = function( name, wavfile ) {
 	var s = new Sampler(wavfile, this.bufferSize, this.sampleRate);
 	s.envelope = new ADSR(0, 0, 1, Infinity, 0, this.sampleRate);
 	// turn off so it does not trigger immediately
 	s.envelope.disable(); 
-	this.addSampler( s );
+	this.addSampler( name, s );
 }
 
 // Borrowed from F1LTER's code
@@ -49,24 +56,24 @@ AudioEngine.midiNoteFreq = [
 	4186.01,  4434.92,  4698.64,  4978 
 ];
 
-	 var sequence1 = [ 1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0 ];
-	 var sequence2 = [ 0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0 ];
 
-
+/**
+ * Add a sequence for an instrument generator.
+ * Name is the name of the generator,
+ * seq is the array of notes.
+ */
+AudioEngine.prototype.addSequence = function( name, seq ) {
+	this.sequences[name] = seq;
+}
 
 		var tick = 0;
 
 AudioEngine.prototype.audioWriter = function() {
-	if( tick % 8 == 0 && sequence1[ tick % 128 / 8 ] == 1 ) {
+	var additiveSignal = new Float32Array(this.bufferSize);
+
+	if( tick % 8 == 0 && this.sequences['snare'][ tick % 128 / 8 ] == 1 ) {
 		this.trigger( this.samplers[0] );
 	} 
-	/*
-	if( tick % 8 == 0 && sequence2[ tick % 128 / 8 ] ) {
-		trigger( s2 );
-	} 
-	*/
-
-	var additiveSignal = new Float32Array(this.bufferSize);
   
 	for( var i=0; i < this.samplers.length; i++ ) {
 		var s = this.samplers[i];
