@@ -1,3 +1,4 @@
+/*globals EventEmitter: true */
 
 /*
 * A base shape.  To be shared among other shapes.
