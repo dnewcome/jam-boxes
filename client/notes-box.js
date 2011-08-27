@@ -73,13 +73,11 @@ var NotesBox = (function() {
   $.extend(Box.prototype, {
     init: function(config) {
       var me=this;
-      $.extend(me, config);
-
       me.noteBoxes = [];
 
-      Shape.prototype.init.call(me, config.dndManager);
+      Shape.prototype.init.call(me, config);
 
-      $(me.paper.canvas).bind("click", me.onPaperClick.bind(me));
+      $(window).bind("click", me.onPaperClick.bind(me));
       me.data.on("update", me.onModelUpdate.bind(me));
       me.setEditable(false);
       me.updateFromData();

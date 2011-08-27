@@ -8,14 +8,13 @@ var Shape = (function() {
   }
 
   // inherit from EventEmitter
-  Shape.prototype = new EventEmitter();
+  Shape.prototype = new View();
   $.extend(Shape.prototype, {
     constructor: Shape,
-    init: function(dndManager) {
+    init: function(config) {
       // All of the shapes.
-      this.dndManager = dndManager;
       this.shapes = [];
-      this.draw();
+      View.prototype.init.call(this, config);
     },
 
     // track an element and attach DND behaviors
@@ -40,12 +39,7 @@ var Shape = (function() {
       }
 
       this.shapes = [];
-    },
-
-    // draw the control contents
-    draw: function( val ) {
     }
-
   });
 
   return Shape;

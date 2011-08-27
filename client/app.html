@@ -2,18 +2,6 @@
 <html>
 <head>
   <title>JAM BOXES</title>
-  <script type="text/javascript" src="lib/jquery-1.6.2.min.js"></script>
-  <script type="text/javascript" src="lib/raphael-min.js"></script>
-  <script type="text/javascript" src="lib/events.js"></script>
-  <script type="text/javascript" src="model.js"></script>
-  <script type="text/javascript" src="arraymodel.js"></script>
-  <script type="text/javascript" src="shape.js"></script>
-  <script type="text/javascript" src="effects-box.js"></script>
-  <script type="text/javascript" src="notes-box.js"></script>
-  <script type="text/javascript" src="dnd-manager.js"></script>
-  <script type="text/javascript" src="main.js"></script>
-
-  <link href='http://fonts.googleapis.com/css?family=Stardos+Stencil' rel='stylesheet' type='text/css'>
   <style type="text/css">
 
     html, body {
@@ -28,21 +16,6 @@
       height: 83px;
     }
 
-    h1 {
-      font-size: 1.75em;
-    }
-
-    h2 {
-      font-size: 1.25em;
-    }
-
-    h1, h2 {
-      font-family: 'Stardos Stencil', cursive;
-      margin: 0;
-      padding: 0;
-      display: inline-block;
-    }
-
     #container {
       width: 980px;
       height: 600px;
@@ -54,18 +27,17 @@
       position: relative;
     }
 
-    #canvas > .username {
+    #canvas > .user {
       position: absolute;
       left: 10px;
+      color: #fff;
     }
   </style>
 </head>
 <body>
   <div id="container">
     <header>
-      <hgroup>
-        <div id="logo"></div>
-      </hgroup>
+      <div id="logo"></div>
     </header>
 
     <div id="canvas"></div>
@@ -73,5 +45,31 @@
     <footer>
     </footer>
   </div>
+  <script type="text/javascript" src="lib/jquery-1.6.2.min.js"></script>
+  <script type="text/javascript" src="lib/raphael-min.js"></script>
+  <script type="text/javascript" src="lib/events.js"></script>
+  <script type="text/javascript" src="model.js"></script>
+  <script type="text/javascript" src="arraymodel.js"></script>
+  <script type="text/javascript" src="usermodel.js"></script>
+  <script type="text/javascript" src="view.js"></script>
+  <script type="text/javascript" src="shape.js"></script>
+  <script type="text/javascript" src="effects-box.js"></script>
+  <script type="text/javascript" src="notes-box.js"></script>
+  <script type="text/javascript" src="userview.js"></script>
+  <script type="text/javascript" src="dnd-manager.js"></script>
+  <script type="text/javascript" src="main.js"></script>
+
+  <script type="text/html" id="userInfoTemplate">
+    <div class="user">
+      <div class="username"></div>
+      <p>
+        <label for="mute">Mute:</label><input type="checkbox" name="mute" value="mute" />
+      </p>
+      <p>
+        <label for="solo">Solo:</label><input type="checkbox" name="solo" value="solo" />
+      </p>
+    </div>
+  </script>
+
 </body>
 </html>
