@@ -83,6 +83,8 @@ function EffectsData(ownerId, measures, notesPerMeasure) {
 			that.setVal(i+ind*that.unitsPerNote*that.notesPerBox, values[i], shouldUpdate);
 		}
 	};
+
+  $(window).bind('tick', this.tick.bind(this));
 }
 
 EffectsData.prototype = new EventEmitter();
