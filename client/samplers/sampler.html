@@ -15,7 +15,7 @@
   <body>
     <script>
       // tick is in ms
-      var tick = 120/60/4/8*1000;
+      var tick = 120/60/16/8*1000;
       var sampleRate = 44100;
 	
       var bufferSize = Math.floor(tick/1000*sampleRate);
@@ -35,53 +35,70 @@
 
       var silence = new Float32Array(bufferSize);
 
+	 var sequence1 = [ 1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0 ];
+	 var sequence2 = [ 0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0 ];
+
       // Setup audio channel
       var output = new Audio();
-      if ( typeof output.mozSetup === 'function' ) {
-        output.mozSetup(1, sampleRate);
-      }
-      
-      var programStart;
-      var writeCount = 0; 
+      output.mozSetup(1, sampleRate);
 
       var s = new Sampler('../audio/1.wav', bufferSize, sampleRate);
       s.envelope = new ADSR(0, 0, 1, Infinity, 0, sampleRate);
       s.envelope.disable(); // turn off so it does not auto trigger
       
+      var s2 = new Sampler('../audio/sn.wav', bufferSize, sampleRate);
+      s2.envelope = new ADSR(0, 0, 1, Infinity, 0, sampleRate);
+      s2.envelope.disable(); // turn off so it does not auto trigger
+
+		var tick = 0;
       var audioWriter = function() {
-        
-            var additiveSignal;
+       		if( tick % 8 == 0 && sequence1[ tick % 128 / 8 ] == 1 ) {
+				trigger( s );
+			} 
+			/*
+       		if( tick % 8 == 0 && sequence2[ tick % 128 / 8 ] ) {
+				trigger( s2 );
+			} 
+			*/
+
+            var additiveSignal = new Float32Array(bufferSize);
           
             if ( s.envelope.isActive() ) {
-				console.log('audiowriter');
               s.generate();
-              additiveSignal = s.applyEnvelope();
+              mix( s.applyEnvelope(), additiveSignal );
             }
           
-            if ( typeof  additiveSignal === 'undefined' ) {
-              additiveSignal = silence;
+            if ( s2.envelope.isActive() ) {
+              s2.generate();
+              mix( s2.applyEnvelope(), additiveSignal );
             }
           
-            if (additiveSignal) {
               output.mozWriteAudio(additiveSignal);
 
-            }
-      }
-		function trigger() {
-          s.envelope.noteOn();
-          s.setFreq(440);
+			tick++;
+         }
+		function trigger( sampler ) {
+          sampler.envelope.noteOn();
+          sampler.setFreq(440);
       
 			setTimeout( function() {
-			  s.envelope.noteOff();
-				s.reset();
+			  sampler.envelope.noteOff();
+				sampler.reset();
 			}, 1000);
 		  }
 
       
+	// mix buf1 into buf2
+	function mix( buf1, buf2 ) {
+		for( var i=0; i < buf1.length; i++ ) {
+			buf2[i] = ( buf1[i] + buf2[i] ) / 2;
+		}	
+	}
         setInterval(audioWriter, bufferTime); // start audioWriter timer      
     </script>
       
-	<button onclick="trigger();">Trig</button>
+	<button onclick="trigger( s );">Trig</button>
+	<button onclick="trigger( s2 );">Trig2</button>
     <h1>Sampler</h1>
     
   </body>
