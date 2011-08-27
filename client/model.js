@@ -48,9 +48,10 @@ var Model = (function() {
 
     // gets a set of values starting at ind
     getValues: function(ind) {
-      var vals = [];
-      for(var i = 0, val; i < this.getWidth; ++i) {
-        vals[i] = this.values[i+ind];
+      var me = this,
+          vals = [];
+      for(var i = 0, val; i < me.copySize; ++i) {
+        vals[i] = me.values[i+ind];
       }
       return vals;
     },
@@ -59,7 +60,8 @@ var Model = (function() {
     // ind - index in the current data where to start copying into.
     // values - values to copy in.
     copy: function(ind, values) {
-      var me = this, len = values.length;
+      var me = this,
+          len = values.length;
       for( var index = 0, value; index < len; ++index ) {
         value = values[index];
         me.setVal(index+ind, value, true);
