@@ -10,13 +10,13 @@
     <script>
 		var ae = new AudioEngine();
 
-      var s = new Sampler('../audio/1.wav', bufferSize, sampleRate);
-      s.envelope = new ADSR(0, 0, 1, Infinity, 0, sampleRate);
+      var s = new Sampler('../audio/1.wav', ae.bufferSize, ae.sampleRate);
+      s.envelope = new ADSR(0, 0, 1, Infinity, 0, ae.sampleRate);
       s.envelope.disable(); // turn off so it does not auto trigger
 	ae.addSampler( s );
       
-      var s2 = new Sampler('../audio/sn.wav', bufferSize, sampleRate);
-      s2.envelope = new ADSR(0, 0, 1, Infinity, 0, sampleRate);
+      var s2 = new Sampler('../audio/sn.wav', ae.bufferSize, ae.sampleRate);
+      s2.envelope = new ADSR(0, 0, 1, Infinity, 0, ae.sampleRate);
       s2.envelope.disable(); // turn off so it does not auto trigger
 	ae.addSampler( s2 );
 

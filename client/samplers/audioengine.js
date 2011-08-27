@@ -1,13 +1,24 @@
 function AudioEngine() {
 	this.interval;
 	this.samplers = [];
+
+	this.sampleRate = 44100;
+	// tick length is hard coded to 120bpm
+	// ends up being about 62ms
+	this.tick = 120/60/16/8*1000;
+	this.bufferTime = this.tick; 
+	this.bufferSize = Math.floor(this.tick/1000*this.sampleRate);
+
+      // Setup audio channel
+	this.output = new Audio();
+	this.output.mozSetup( 1, this.sampleRate );
 }
 
 AudioEngine.prototype.start = function() {
 	var me = this;
 	this.interval = setInterval( function() { 	
 		me.audioWriter(); 
-	}, bufferTime ); 
+	}, this.bufferTime ); 
 }
 AudioEngine.prototype.stop = function() {
 	clearInterval( this.interval );
@@ -16,12 +27,6 @@ AudioEngine.prototype.stop = function() {
 AudioEngine.prototype.addSampler = function( s ) {
 	this.samplers.push( s );
 }
-      // tick is in ms
-      var tick = 120/60/16/8*1000;
-      var sampleRate = 44100;
-	
-      var bufferSize = Math.floor(tick/1000*sampleRate);
-      var bufferTime = tick; 
 
 
 // Borrowed from F1LTER's code
@@ -40,9 +45,6 @@ AudioEngine.midiNoteFreq = [
 	 var sequence1 = [ 1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0 ];
 	 var sequence2 = [ 0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0 ];
 
-      // Setup audio channel
-      var output = new Audio();
-      output.mozSetup(1, sampleRate);
 
 
 		var tick = 0;
@@ -57,7 +59,7 @@ AudioEngine.prototype.audioWriter = function() {
 	} 
 	*/
 
-	var additiveSignal = new Float32Array(bufferSize);
+	var additiveSignal = new Float32Array(this.bufferSize);
   
 	for( var i=0; i < this.samplers.length; i++ ) {
 		var s = this.samplers[i];
@@ -67,7 +69,7 @@ AudioEngine.prototype.audioWriter = function() {
 		}
 	}
   
-	  output.mozWriteAudio(additiveSignal);
+	  this.output.mozWriteAudio(additiveSignal);
 
 	tick++;
 };
