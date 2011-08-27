@@ -34,7 +34,7 @@ var NotesBox = (function() {
         shapes = me.shapes,
         noteBoxes = me.noteBoxes,
         innerStartX = me.xpos + INNER_X_OFFSET,
-        innerStartY = me.ypos + INNER_Y_OFFSET;
+        innerStartY = me.ypos + INNER_Y_OFFSET,
         inner = paper.rect(innerStartX, innerStartY, INNER_WIDTH, INNER_HEIGHT);
 
     for (var i=0; i < BEATS; ++i) {
@@ -69,14 +69,8 @@ var NotesBox = (function() {
   $.extend(Box.prototype, {
     init: function(config) {
       var me=this;
-      me.model = config.model;
-      me.modelOffset = config.modelOffset;
+      $.extend(me, config);
 
-      me.paper = config.paper;
-      $(me.paper.canvas).bind("click", me.onPaperClick.bind(me));
-
-      me.xpos = config.xpos;
-      me.ypos = config.ypos;
       me.width = OUTER_WIDTH;
       me.height = OUTER_HEIGHT;
 
@@ -84,6 +78,7 @@ var NotesBox = (function() {
 
       Shape.prototype.init.call(this);
 
+      $(me.paper.canvas).bind("click", me.onPaperClick.bind(me));
       me.model.on("update", this.onModelUpdate.bind(this));
       this.setEditable(false);
     },
