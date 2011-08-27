@@ -1,1 +1,4 @@
-node server/server.js
+#!/bin/sh
+
+cd server
+node server.js
