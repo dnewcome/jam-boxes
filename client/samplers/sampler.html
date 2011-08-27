@@ -54,38 +54,23 @@
       s.envelope.disable(); // turn off so it does not auto trigger
       
       var audioWriter = function() {
-        if (s.loaded) {
-          if ( programStart === undefined ) {
-             programStart = new Date();
-          }
         
-		 // protects from being called too often
-          while ( (new Date() - programStart) / 1000 * sampleRate / bufferSize >= writeCount ) {
             var additiveSignal;
           
             if ( s.envelope.isActive() ) {
-		console.log('audiowriter');
+				console.log('audiowriter');
               s.generate();
               additiveSignal = s.applyEnvelope();
             }
           
-			// need to keep writing to buffer even if no sound otherwise
-			// the audio will queue up without being heard
             if ( typeof  additiveSignal === 'undefined' ) {
               additiveSignal = silence;
             }
-
-            // Flush buffer  
-            // output.mozWriteAudio([]);
           
             if (additiveSignal) {
-              // Write next audio frame
               output.mozWriteAudio(additiveSignal);
 
             }
-            writeCount++;
-          }
-        }
       }
 		function trigger() {
           s.envelope.noteOn();
@@ -97,36 +82,12 @@
 			}, 1000);
 		  }
 
-      $(function() {
-        $('#loop_mode').change(changeLoopMode);
-        
-        changeLoopMode(); // reset to default value
-      });
       
-      var changeLoopMode = function() {
-        s.loopMode = parseInt($('#loop_mode').val());
-      };
         setInterval(audioWriter, bufferTime); // start audioWriter timer      
     </script>
       
 	<button onclick="trigger();">Trig</button>
     <h1>Sampler</h1>
-    <canvas id="keyboard" width="200px" height="200px"></canvas>
-    <div>
-    <b>Loop Mode:</b>
-    <select id="loop_mode">
-      <option value="0" selected="selected">Off</option>
-      <option value="1">FW</option>
-      <option value="2">BW</option>
-      <option value="3">FW-BW</option>
-    </select>
-    <div>
     
-    <h2>Playing sample</h2>
-    <p>Bottom row keys z to m are the white keys of one octave of a piano.</p>
-    <p>Middle row keys s,d  and g,h,j are the black keys of one octave of a piano</p>
-    <p>- and = decrease or increase the octave</p>
-    <h2>Setting play start and end region</h2>
-    <p>Clicking on the sample with the left button will set the start pos and the right will set the end pos</p>
   </body>
 </html>
