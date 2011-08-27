@@ -1,20 +1,30 @@
 (function() {
-  var MEASURES = 8;
-  var MEASURE_MARGIN = 10;
+  var MEASURES = 8,
+      MEASURE_MARGIN = 10,
+      LEFT_MARGIN = 50,
+      BOX_OUTER_WIDTH = 48,
+      BOX_OUTER_HEIGHT = 48,
+      BOX_INNER_WIDTH = 36,
+      BOX_INNER_HEIGHT = 36;
 
   function main() {
     window.paper = Raphael('canvas', 980, 600);
 
-    var model = new Model();
+    var notesData = new Model();
 
     for (var i = 0; i < MEASURES; ++i) {
-      new NotesBox({
-        model: model,
-        modelOffset: i * 4,
+      var measureBox = new NotesBox({
+        data: notesData,
+        ind: i * 4,
         paper: paper,
-        xpos: i * (48 + MEASURE_MARGIN),
-        ypos: 30
+        xpos: LEFT_MARGIN + i * (48 + MEASURE_MARGIN),
+        ypos: 30,
+        width: BOX_OUTER_WIDTH,
+        height: BOX_OUTER_HEIGHT,
+        innerWidth: BOX_INNER_WIDTH,
+        innerHeight: BOX_INNER_HEIGHT
       });
+		  effectsBoxRegistry.boxes.push(measureBox);
     }
 
 	var effectsData1 = new EffectsData(0);

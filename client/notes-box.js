@@ -3,14 +3,6 @@
 var NotesBox = (function() {
   var BEATS = 4;
   var NOTES = 10;
-  var OUTER_WIDTH = 48;
-  var OUTER_HEIGHT = 48;
-  var INNER_WIDTH = 36;
-  var INNER_HEIGHT = 36;
-  var INNER_X_OFFSET = (OUTER_WIDTH - INNER_WIDTH)/2;
-  var INNER_Y_OFFSET = (OUTER_HEIGHT - INNER_HEIGHT)/2;
-  var BEAT_WIDTH = INNER_WIDTH / BEATS;
-  var NOTE_HEIGHT = INNER_HEIGHT / NOTES;
   var SELECTED_COLOR = '#000';
   var CLEAR_COLOR = '#fff';
 
@@ -19,28 +11,33 @@ var NotesBox = (function() {
   function createOuter() {
     var me = this,
         paper = me.paper,
-        outer = me.outer = paper.rect(me.xpos, me.ypos, OUTER_WIDTH, OUTER_HEIGHT,
+        outer = me.outer = paper.rect(me.xpos, me.ypos, me.width, me.height,
       10).attr({
       fill: '#fff'
     });
 
     $(outer.node).bind('click', me.onOuterClick.bind(me));
-    me.shapes.push(outer);
+    me.trackEl(outer);
   }
 
   function createInner() {
     var me = this,
         paper = me.paper,
-        shapes = me.shapes,
         noteBoxes = me.noteBoxes,
-        innerStartX = me.xpos + INNER_X_OFFSET,
-        innerStartY = me.ypos + INNER_Y_OFFSET,
-        inner = paper.rect(innerStartX, innerStartY, INNER_WIDTH, INNER_HEIGHT);
+        innerXOffset = (me.width - me.innerWidth)/2,
+        innerYOffset = (me.height - me.innerHeight)/2,
+        innerStartX = me.xpos + innerXOffset,
+        innerStartY = me.ypos + innerYOffset,
+        inner = paper.rect(innerStartX, innerStartY, me.innerWidth, me.innerHeight);
 
+    var BEAT_WIDTH = me.innerWidth / BEATS;
+    var NOTE_HEIGHT = me.innerHeight / NOTES;
+
+    me.trackEl(inner);
     for (var i=0; i < BEATS; ++i) {
       // this is the offset into the model
-      var modelI = i + me.modelOffset;
-      noteBoxes[modelI] = [];
+      var dataI = i + me.ind;
+      noteBoxes[dataI] = [];
       for (var j=0; j < NOTES; ++j) {
         var x = innerStartX + i * BEAT_WIDTH,
             y = innerStartY + j * NOTE_HEIGHT,
@@ -50,15 +47,14 @@ var NotesBox = (function() {
             });
 
         var node = note.node;
-        // We pass the modelI and j so that we can set the model
-        $(note.node).bind('click', me.onNoteClick.bind(me, modelI, j));
+        // We pass the dataI and j so that we can set the model
+        $(note.node).bind('click', me.onNoteClick.bind(me, dataI, j));
 
-        shapes.push(note);
-        noteBoxes[modelI][j] = note;
+        me.trackEl(note);
+        noteBoxes[dataI][j] = note;
       }
     }
 
-    shapes.push(inner);
   }
 
 
@@ -71,15 +67,12 @@ var NotesBox = (function() {
       var me=this;
       $.extend(me, config);
 
-      me.width = OUTER_WIDTH;
-      me.height = OUTER_HEIGHT;
-
       me.noteBoxes = [];
 
       Shape.prototype.init.call(this);
 
       $(me.paper.canvas).bind("click", me.onPaperClick.bind(me));
-      me.model.on("update", this.onModelUpdate.bind(this));
+      me.data.on("update", this.onModelUpdate.bind(this));
       this.setEditable(false);
     },
 
@@ -119,6 +112,10 @@ var NotesBox = (function() {
         });
     },
 
+    leaveDrop: function() {
+
+    },
+
     onModelUpdate: function(index, value) {
       var me=this,
           noteBoxes = me.noteBoxes[index];
@@ -136,7 +133,7 @@ var NotesBox = (function() {
       var me=this;
       me.ignorePaperClick = true;
       if (me.editable) {
-        me.model.setVal(x, y, true);
+        me.data.setVal(x, y, true);
       }
       else {
         me.setEditable(true);
