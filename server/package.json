@@ -1,0 +1,13 @@
+{
+  "name": "jamboxes",
+  "version": "0.0.1",
+  "description": "Collaborative music creation.",
+  "keywords": ["app", "web"],
+  "repository": "https://github.com/nko2/witty-team-name",
+  "author": "Socket to the Man <dnewcome@elevenprime.com> (http://nodeknockout.com/teams/witty-team-name)",
+  "dependencies": {
+    "express": ">= 2.3.11"
+  },
+  "devDependencies": {},
+  "main": "server"
+}
