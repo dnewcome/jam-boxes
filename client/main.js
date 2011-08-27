@@ -11,7 +11,11 @@
     window.paper = Raphael('canvas', 980, 600);
 
     createUser(0, 0);
-    createUser(1, 1);
+    var fakeData = [];
+    for(var i = 0; i < 32; ++i) {
+      fakeData[i] = ~~(Math.random() * 10);
+    }
+    createUser(1, 1, fakeData);
 
     var effectsData1 = new EffectsData(0);
 
@@ -43,10 +47,15 @@
   }
 
 
-  function createUser(ownerId, rowIndex) {
-    var notesData = new Model({
+  function createUser(ownerId, rowIndex, data) {
+    var modelParams = {
       ownerId: ownerId
-    });
+    };
+
+    if(data) {
+      modelParams.values = data;
+    }
+    var notesData = new Model(modelParams);
 
     for (var i = 0; i < MEASURES; ++i) {
       var measureBox = new NotesBox({
