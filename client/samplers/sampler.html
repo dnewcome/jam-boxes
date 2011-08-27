@@ -21,16 +21,6 @@
       var bufferSize = Math.floor(tick/1000*sampleRate);
       var bufferTime = tick; 
 
-      // var bufferSize = 1024;
-      // var bufferTime = Math.floor(1000 / (sampleRate / bufferSize));
-      
-      var amplitude  = 0.1; // Default amplitude at 70%
-
-      var oct = 3; // Root Octave
-
-      var oscs = [];
-      var noteOn = [];
-      var playSample = false;
 
       // Borrowed from F1LTER's code
       var midiNoteFreq =  [ 16.35,    17.32,    18.35,    19.45,    20.6,     21.83,    23.12,    24.5,     25.96,    27.5,  29.14,    30.87,
