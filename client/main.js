@@ -141,6 +141,10 @@
     var users = {};
 
     var network = new Network();
+    network.on("localuserjoined", function(data) {
+      users.local.setVal("userid", data.userid);
+    });
+
     network.on("userupdate", function(userData) {
       var userid = userData.userid;
       var model = users[userid];
@@ -166,7 +170,8 @@
       notes: userNotes,
       effects: effectsData
     };
-    createUser(userData);
+    model = createUser(userData);
+    users.local = model;
 
 	var headphones = paper.image("headphones.png", CANVAS_WIDTH/2-300/2, 0, 300, 300);
 	setTimeout(function() {
