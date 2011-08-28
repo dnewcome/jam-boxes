@@ -13,32 +13,33 @@ var ArrayModel = (function() {
     constructor: ArrayModel,
 
     init: function(config) {
-      this.values = [];
-      this.currentTick = -1;
-      this.currentIndex = -1;
+      var me = this;
+      me.values = [];
+      me.currentTick = -1;
+      me.currentIndex = -1;
 
-      $.extend(this, config);
+      $.extend(me, config);
 
-	  var me = this;
-
-	  ae.on('tick', this.tick.bind(this));	  
+      ae.on('tick', me.tick.bind(me));
     },
 
-	tick: function() {
-		this.currentTick = this.currentTick+1;
-	  	if (this.currentTick >= this.totalTicks) {
-	  		this.currentTick = 0;
-	  	}
+    tick: function() {
+      var me=this;
+      me.currentTick++;
+      me.currentTick = me.currentTick % me.totalTicks;
 
-		if ((this.currentTick % this.numUnits) === 0) {
-			this.currentIndex = this.currentIndex+1;
-			if (this.currentIndex >= this.numValues) {
-				this.currentIndex = 0;
-			}
-			//console.log("notes: " + this.currentIndex);
-			this.emit('update', this.currentIndex, this.values[this.currentIndex]);
-		}
-	},
+      if ((me.currentTick % me.numUnits) === 0) {
+        var oldIndex = me.currentIndex;
+
+        me.currentIndex++;
+        me.currentIndex = me.currentIndex % me.numValues;
+
+        if(oldIndex >= 0) {
+          me.emit('tickremove', oldIndex, me.values[oldIndex], me.currentIndex);
+        }
+        me.emit('tickupdate', me.currentIndex, me.values[me.currentIndex]);
+      }
+    },
 
     // updates the UI. the UI element is responsible for determining
     // whether or not the current index should update the UI (i.e.

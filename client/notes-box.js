@@ -34,7 +34,7 @@ var NotesBox = (function() {
   function createInner() {
     var me = this,
         paper = me.paper,
-        noteBoxes = me.noteBoxes,
+        columnBoxes = me.columnBoxes,
         innerXOffset = (me.width - me.innerWidth)/2,
         innerYOffset = (me.height - me.innerHeight)/2,
         innerStartX = me.xpos + innerXOffset,
@@ -49,7 +49,7 @@ var NotesBox = (function() {
     for (var i=0; i < me.notesPerMeasure; ++i) {
       // this is the offset into the model
       var dataI = i + me.ind;
-      noteBoxes[dataI] = [];
+      columnBoxes[dataI] = [];
       for (var j=0; j < NOTES; ++j) {
         var x = innerStartX + i * BEAT_WIDTH,
             y = innerStartY + j * NOTE_HEIGHT,
@@ -61,7 +61,7 @@ var NotesBox = (function() {
         $(note.node).bind('click', me.onNoteClick.bind(me, dataI, j));
 
         me.trackEl(note);
-        noteBoxes[dataI][j] = note;
+        columnBoxes[dataI][j] = note;
       }
     }
 
@@ -75,12 +75,14 @@ var NotesBox = (function() {
   $.extend(Box.prototype, {
     init: function(config) {
       var me=this;
-      me.noteBoxes = [];
+      me.columnBoxes = [];
 
       Shape.prototype.init.call(me, config);
 
       $(window).bind("click", me.onPaperClick.bind(me));
       me.data.on("update", me.onModelUpdate.bind(me));
+      me.data.on("tickremove", me.onTickRemove.bind(me));
+      me.data.on("tickupdate", me.onTickUpdate.bind(me));
       me.setEditable(false);
       me.updateFromData();
     },
@@ -160,53 +162,66 @@ var NotesBox = (function() {
     onModelUpdate: function(index, value) {
       var me=this,
       	  data = me.data,
-          noteBoxes = me.noteBoxes[index],
+          columnBoxes = me.columnBoxes[index],
           ind = me.ind;
 
-	  if (noteBoxes) {
-	      noteBoxes.forEach(function(note, j) {
-    	    var selected = value === j;
-        	me.updateNoteDisplay(note, selected);
-      	});
-	  }
+      if (columnBoxes) {
+          columnBoxes.forEach(function(note, j) {
+            var selected = value === j;
+            me.updateNoteDisplay(note, selected);
+          });
+      }
+    },
 
-	  if (data.currentIndex >= 0 && data.currentIndex >= ind && data.currentIndex < ind + me.notesPerMeasure) {
-	  	if (me.outer.fill != OUTER_COLOR_HIGHLIGHT) {
-		  me.outer.fill = OUTER_COLOR_HIGHLIGHT;
-		  me.outer.attr({fill: OUTER_COLOR_HIGHLIGHT});
-		}
+    onTickRemove: function(index, value, newIndex) {
+      var me=this,
+      	  data = me.data,
+          columnBoxes = me.columnBoxes[index],
+          ind = me.ind;
 
-		if (noteBoxes) {
-			if (value) {
-				var note = noteBoxes[value];
-	          	if (note.fill != SELECTED_COLOR_HIGHLIGHT) {
-				  note.fill = SELECTED_COLOR_HIGHLIGHT;
-				  note.attr({fill: SELECTED_COLOR_HIGHLIGHT});
-				}
-				else if (note.fill != SELECTED_COLOR) {
-				  note.fill = SELECTED_COLOR;
-				  note.attr({fill: SELECTED_COLOR});
-				}
-	      	}
-		}
-	  }
-	  else {
-	  	if (me.outer.fill != OUTER_COLOR) {
-		  me.outer.fill = OUTER_COLOR;
-		  me.outer.attr({fill: OUTER_COLOR});
-		}
-		if (noteBoxes) {
-			noteBoxes.forEach(function(note, j) {
-				var selected = value === j;
-				if (selected && note.fill == SELECTED_COLOR_HIGHLIGHT) {
-					if (note.fill != SELECTED_COLOR) {
-				  		note.fill = SELECTED_COLOR;
-				  		note.attr({fill: SELECTED_COLOR});
-					}
-				}
-			});
-		}
-	  }
+      // We handled the last row,
+      if (columnBoxes) {
+        // Get rid of old box if it is not us.
+        if(!me.columnBoxes[newIndex]) {
+          me.outer.fill = OUTER_COLOR;
+          me.outer.attr({fill: OUTER_COLOR});
+        }
+
+        if ("undefined" !== typeof value) {
+          var note = columnBoxes[value];
+
+          if (note.fill != SELECTED_COLOR) {
+            note.fill = SELECTED_COLOR;
+            note.attr({fill: SELECTED_COLOR});
+          }
+        }
+      }
+
+    },
+
+    onTickUpdate: function(index, value) {
+      var me=this,
+      	  data = me.data,
+          columnBoxes = me.columnBoxes[index],
+          ind = me.ind;
+
+      // Current box is selected
+      if (columnBoxes) {
+        if (me.outer.fill != OUTER_COLOR_HIGHLIGHT) {
+          // select new box
+          me.outer.fill = OUTER_COLOR_HIGHLIGHT;
+          me.outer.attr({fill: OUTER_COLOR_HIGHLIGHT});
+        }
+
+        if ("undefined" !== typeof value) {
+          var note = columnBoxes[value];
+
+          if (note.fill != SELECTED_COLOR_HIGHLIGHT) {
+            note.fill = SELECTED_COLOR_HIGHLIGHT;
+            note.attr({fill: SELECTED_COLOR_HIGHLIGHT});
+          }
+        }
+      }
     },
 
     onNoteClick: function(x, y, event) {
