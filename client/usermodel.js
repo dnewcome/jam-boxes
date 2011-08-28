@@ -10,13 +10,16 @@ var UserModel = (function() {
     constructor: UserModel,
     init: function(config) {
       var me=this;
-      if(!config.values.ownerId) {
+      if(0 === config.values.ownerId) {
         me.on("update:name", me.onLocalUserNameChange.bind(me));
 
         var values = config.values;
         if(localStorage.localUserName) {
           values.name = localStorage.localUserName;
         }
+
+        values.returning = !!localStorage.returning;
+        localStorage.returning = true;
       }
       Model.prototype.init.call(me, config);
     },
