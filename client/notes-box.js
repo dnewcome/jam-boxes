@@ -175,11 +175,36 @@ var NotesBox = (function() {
 		  me.outer.fill = OUTER_COLOR_HIGHLIGHT;
 		  me.outer.attr({fill: OUTER_COLOR_HIGHLIGHT});
 		}
+
+		if (noteBoxes) {
+			if (value) {
+				var note = noteBoxes[value];
+	          	if (note.fill != SELECTED_COLOR_HIGHLIGHT) {
+				  note.fill = SELECTED_COLOR_HIGHLIGHT;
+				  note.attr({fill: SELECTED_COLOR_HIGHLIGHT});
+				}
+				else if (note.fill != SELECTED_COLOR) {
+				  note.fill = SELECTED_COLOR;
+				  note.attr({fill: SELECTED_COLOR});
+				}
+	      	}
+		}
 	  }
 	  else {
 	  	if (me.outer.fill != OUTER_COLOR) {
 		  me.outer.fill = OUTER_COLOR;
 		  me.outer.attr({fill: OUTER_COLOR});
+		}
+		if (noteBoxes) {
+			noteBoxes.forEach(function(note, j) {
+				var selected = value === j;
+				if (selected && note.fill == SELECTED_COLOR_HIGHLIGHT) {
+					if (note.fill != SELECTED_COLOR) {
+				  		note.fill = SELECTED_COLOR;
+				  		note.attr({fill: SELECTED_COLOR});
+					}
+				}
+			});
 		}
 	  }
     },
