@@ -137,12 +137,16 @@
   function main() {
     window.paper = Raphael('canvas', CANVAS_WIDTH, 600);
 
+	var userNotes = [];
+	// ae is the audio engine instance
+	ae.addSequence(	'cymbal', userNotes );
+
     createUser(0, {
       ownerId: 0,
       name: 'Jeremy',
       mute: false,
       solo: true,
-      notes: {},
+      notes: userNotes,
       effects: {}
     });
 
