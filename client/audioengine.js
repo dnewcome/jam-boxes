@@ -77,11 +77,19 @@ AudioEngine.prototype.audioWriter = function() {
 
 	// take a look at tick position to find out if we need to 
 	// trigger any generators
+	
 	if( this.tick % 8 == 0 ) {
 		for( var seq in this.sequences ) {
 			var sequence = this.sequences[ seq ];
-			if( sequence[ this.tick % 128 / 8 ] == 1 ) {
-				this.trigger( this.samplers[ seq ] );
+			if( sequence[ this.tick % 256 / 8 ] != null ) {
+
+				// retrigger
+				this.samplers[seq].envelope.noteOff();
+				this.samplers[seq].reset();
+				this.trigger( 
+					this.samplers[ seq ],
+					AudioEngine.midiNoteFreq[sequence[ this.tick % 256 / 8 ] ] + 12 
+				);
 			}
 		}
 
@@ -101,9 +109,9 @@ AudioEngine.prototype.audioWriter = function() {
 	this.tick++;
 };
 
-AudioEngine.prototype.trigger = function( sampler ) {
+AudioEngine.prototype.trigger = function( sampler, freq ) {
   sampler.envelope.noteOn();
-  sampler.setFreq(440);
+  sampler.setFreq(freq);
 
 	setTimeout( function() {
 	  sampler.envelope.noteOff();
