@@ -124,22 +124,26 @@ function AudioEngine() {
 
       // Setup audio channel
 	this.output = new Audio();
-	this.output.mozSetup( 1, this.sampleRate );
+  try {
+    this.output.mozSetup( 1, this.sampleRate );
+  }
+  catch(e) {
+    console.log("Cannot initialize audio!");
+  }
 
-	this.tick = 0;
-	this.numSamplesWritten = 0;
-	this.prebufferSize = this.sampleRate/2;
+  this.tick = 0;
+  this.numSamplesWritten = 0;
+  this.prebufferSize = this.sampleRate/2;
 
-	this.overrideProvider = undefined;
-	this.overrideProviderKey = undefined;
+  this.overrideProvider = undefined;
+  this.overrideProviderKey = undefined;
 
-	this.tickDelay = 32;
+  this.tickDelay = 32;
 
-	this.outputFilter = new IIRFilter(44100, 5000, 0, 0);
-	this.outputCompressor = new Compressor(44100);
-	this.outputCompressor.gain = 1.0;
+  this.outputFilter = new IIRFilter(44100, 5000, 0, 0);
+  this.outputCompressor = new Compressor(44100);
+  this.outputCompressor.gain = 1.0;
 
-	
 }
 
 AudioEngine.prototype = new EventEmitter();
@@ -244,7 +248,7 @@ AudioEngine.prototype.writeAudio = function() {
 			for( var seq in this.sequences ) {
 				var sequence = this.sequences[ seq ];
 				if( sequence[ tick % 256 / 8 ] != null ) {
-	
+
 					// retrigger
 					this.samplers[seq].envelope.noteOff();
 					this.samplers[seq].reset();
@@ -275,7 +279,7 @@ AudioEngine.prototype.writeAudio = function() {
 				}
 				var val1 = effectsData[0];
 				var val2 = 1.-effectsData[1];
-	
+
 				var cutoff = val1 * 5000 + 500;
 		      	//var resonance = .5*val2 + .3;
 		      	var resonance = 0.8;
@@ -289,13 +293,13 @@ AudioEngine.prototype.writeAudio = function() {
 
 				var distortion = this.distortions[key];
 				distortion.gain = val2*16;
-	
+
 				for( var j=1; j < buffer.length; j++ ) {
 					buffer[j] = lowpassFilter.pushSample( buffer[j] );
 					buffer[j] = bitCrusher.pushSample( buffer[j] );
 					buffer[j] = distortion.pushSample( buffer[j] );
 				}
-	
+
 				outBuffer = DSP.mixSampleBuffers(buffer, outBuffer, false, 1);
 			}
 		}
@@ -308,17 +312,21 @@ AudioEngine.prototype.writeAudio = function() {
 	}
 
 	// flush the buffer
-    this.output.mozWriteAudio([]);
+  try {
+      this.output.mozWriteAudio([]);
 
-	var numSamplesLeft = outBuffer.length;
-	while (numSamplesLeft > 0) {
-		var numSamplesWritten = this.output.mozWriteAudio(outBuffer);
-		this.numSamplesWritten = this.numSamplesWritten + numSamplesWritten;
-		numSamplesLeft = numSamplesLeft - numSamplesWritten;
-		outBuffer = outBuffer.subarray(numSamplesWritten);
-	}
+      var numSamplesLeft = outBuffer.length;
+      while (numSamplesLeft > 0) {
+        var numSamplesWritten = this.output.mozWriteAudio(outBuffer);
+        this.numSamplesWritten = this.numSamplesWritten + numSamplesWritten;
+        numSamplesLeft = numSamplesLeft - numSamplesWritten;
+        outBuffer = outBuffer.subarray(numSamplesWritten);
+      }
 
-	var currentPosition = this.output.mozCurrentSampleOffset();
+      var currentPosition = this.output.mozCurrentSampleOffset();
+    } catch(e) {
+      // will error on non supporting browsers
+    }
 
 	var available = currentPosition + this.prebufferSize - this.numSamplesWritten;
 
