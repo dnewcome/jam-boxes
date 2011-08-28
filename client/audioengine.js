@@ -50,7 +50,7 @@ AudioEngine.prototype.addSampler = function( name, sampler ) {
  */
 AudioEngine.prototype.createSampler = function( name, wavfile ) {
 	var s = new Sampler(wavfile, this.bufferSize, this.sampleRate);
-	s.envelope = new ADSR(0, 0, 1, Infinity, 0, this.sampleRate);
+	s.envelope = new ADSR(0, 0, 1, this.tickTime*8/1000, 0, this.sampleRate);
 	// turn off so it does not trigger immediately
 	s.envelope.disable();
 	this.addSampler( name, s );
@@ -156,7 +156,7 @@ AudioEngine.prototype.writeAudio = function() {
 	}
 
 	// flush the buffer
-//    this.output.mozWriteAudio([]);
+    this.output.mozWriteAudio([]);
 
 	var numSamplesLeft = outBuffer.length;
 	while (numSamplesLeft > 0) {
