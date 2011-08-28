@@ -58,10 +58,12 @@ function getJam(jamid) {
   return jam
 }
 
-function createJam() {
+function createJam(jamid) {
   // create a new jam
-  var jamid = '_' + currJamID;
-  currJamID++;
+  if(!jamid) {
+    jamid = '_' + currJamID;
+    currJamID++;
+  }
 
   jam = {
     id: jamid,
@@ -74,29 +76,49 @@ function createJam() {
   return jam;
 };
 
-function socketJoinJam(socket) {
+function socketJoinJam(socket, jam) {
+  var userid = jam.userCount;
+
+  // associate the socket with a jam
+  var socketid = getSocketId(socket);
+  socketToJams[socketid] = {
+    jamid: jam.id,
+    userid: userid
+  };
+
+  jam.userCount++;
+}
+
+function socketJoinSpecifiedJam(jamid, socket) {
+  var jam = getJam(jamid);
+  if(!jam) {
+    // create new jam with that name.
+    jam = createJam(jamid);
+  }
+
+  if(jam && jam.userCount < MAX_USERS_PER_ROOM) {
+    socketJoinJam(socket, jam);
+  }
+  else {
+    // no more users can be added to this jam
+    jam = undefined;
+  }
+
+  return jam;
+}
+
+function socketJoinAvailableJam(socket) {
   var jamid = getJamIdForSocket(socket),
       jam;
 
   if(jamid) {
-    console.log("re-joining old jam");
     jam = getJam(jamid);
   }
   else {
-    console.log("searching for available jam");
+
     // user is not part of a jam, add htem to one.
     var jam = getAvailableJam();
-
-    var userid = jam.userCount;
-
-    // associate the socket with a jam
-    var socketid = getSocketId(socket);
-    socketToJams[socketid] = {
-      jamid: jam.id,
-      userid: userid
-    };
-
-    jam.userCount++;
+    socketJoinJam(socket, jam);
   }
 
   return jam;
@@ -106,7 +128,6 @@ function socketLeaveJam(socket) {
   var jamid = getJamIdForSocket(socket);
 
   if (jamid) {
-    console.log("leaving jam: " + jamid);
     var jam = getJam(jamid);
     jam.userCount--;
 
@@ -117,7 +138,6 @@ function socketLeaveJam(socket) {
 sio.sockets.on('connection', function(socket) {
   var userid;
   socket.on('broadcast', function(data) {
-    console.log("broadcast received from: " + socket.id);
     var jamInfo = getJamInfoForSocket(socket);
 
     if(jamInfo) {
@@ -126,15 +146,26 @@ sio.sockets.on('connection', function(socket) {
         data.name = "Unknown User";
       }
 
-      console.log("broadcasting to: " + jamInfo.jamid);
       socket.broadcast.to(jamInfo.jamid).emit('userupdate', data);
     }
 });
 
   socket.on('join', function(data) {
-    var jam = socketJoinJam(socket);
+    var jamid = data.jamid;
+    var jam;
 
-    socket.join(jam.id);
+    if(jamid) {
+      jam = socketJoinSpecifiedJam(jamid, socket);
+    }
+
+    if(!jam) {
+      // Either no jam was specified or the jam was full
+      jam = socketJoinAvailableJam(socket);
+    }
+
+    var jamInfo = getJamInfoForSocket(socket);
+    socket.emit("joinack", jamInfo);
+    socket.join(jamInfo.jamid);
   });
 
   socket.on('disconnect', function(data) {

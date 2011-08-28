@@ -48,13 +48,65 @@ var UserView = (function() {
         });
       }
 
+	  this.setMute = function (isMute) {
+	  	me.data.setVal("mute", isMute);
+        if (isMute) {
+        	//me.root.find("[name=mute]").id = 'muteActive';
+        	me.root.find('.mute').removeClass('muteInactive');
+        	me.root.find('.mute').addClass('muteActive');
 
-      me.root.find("[name=mute]").bind("mousedown", function(event) {
+			if (me.data.getVal("solo")) {
+				me.setSolo(false);
+			}
+        }
+        else {
+      	    me.root.find('.mute').removeClass('muteActive');
+        	me.root.find('.mute').addClass('muteInactive');
+        }
+	  };
+
+	  this.setSolo = function(isSolo) {
+	  	me.data.setVal("solo", isSolo);
+        if (isSolo) {
+        	me.root.find('.solo').removeClass('soloInactive');
+        	me.root.find('.solo').addClass('soloActive');
+
+			if (me.data.getVal("mute")) {
+				me.setMute(false);
+			}
+        }
+        else {
+      	    me.root.find('.solo').removeClass('soloActive');
+        	me.root.find('.solo').addClass('soloInactive');
+        }
+	  }
+
+	  me.root.find('.mute').bind("mousedown", function(event) {
+//	  	event.preventDefault();
+        var val = me.data.getVal("mute");
+        var val = !val;	// toggle the value
+        me.setMute(val);
+	  });
+
+	  me.root.find('.solo').bind("mousedown", function(event) {
+	  	var val = me.data.getVal("solo");
+        var val = !val;	// toggle the value
+		me.setSolo(val);
+	  });
+
+      /*me.root.find("[name=mute]").bind("mousedown", function(event) {
         event.preventDefault();
 
         var val = me.data.getVal("mute");
-        me.data.setVal("mute", !val);
-      });
+        var val = !val;	// toggle the value
+        me.data.setVal("mute", val);
+        if (val) {
+        	me.root.find("[name=mute]").id = 'muteActive';
+        }
+        else {
+        	me.root.find("[name=mute]").id = 'muteInactive';
+        }
+      });*/
     },
 
     draw: function() {
