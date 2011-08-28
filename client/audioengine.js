@@ -1,9 +1,116 @@
+function BitCrusher(sampleRate, bits){
+	var	self	= this,
+		sample  = 0.0;
+	self.sampleRate	= sampleRate;
+	self.resolution	= bits ? Math.pow(2, bits-1) : Math.pow(2, 8-1); // Divided by 2 for signed samples (8bit range = 7bit signed)
+	self.pushSample	= function(s){
+		sample	= Math.floor(s*self.resolution+0.5)/self.resolution
+		return sample;
+	};
+	self.getMix = function(){
+		return sample;
+	};
+}
+
+function IIRFilter(samplerate, cutoff, resonance, type){
+	var	self	= this,
+		f	= [0.0, 0.0, 0.0, 0.0],
+		freq, damp,
+		prevCut, prevReso,
+
+		sin	= Math.sin,
+		min	= Math.min,
+		pow	= Math.pow;
+
+	self.cutoff = !cutoff ? 20000 : cutoff; // > 40
+	self.resonance = !resonance ? 0.1 : resonance; // 0.0 - 1.0
+	self.samplerate = samplerate;
+	self.type = type || 0;
+
+	function calcCoeff(){
+		freq = 2 * sin(Math.PI * min(0.25, self.cutoff / (self.samplerate * 2)));
+		damp = min(2 * (1 - pow(self.resonance, 0.25)), min(2, 2 / freq - freq * 0.5));
+	}
+
+	self.pushSample = function(sample){
+		if (prevCut !== self.cutoff || prevReso !== self.resonance){
+			calcCoeff();
+			prevCut = self.cutoff;
+			prevReso = self.resonance;
+		}
+
+		f[3] = sample - damp * f[2];
+		f[0] = f[0] + freq * f[2];
+		f[1] = f[3] - f[0];
+		f[2] = freq * f[1] + f[2];
+
+		f[3] = sample - damp * f[2];
+		f[0] = f[0] + freq * f[2];
+		f[1] = f[3] - f[0];
+		f[2] = freq * f[1] + f[2];
+
+		return f[self.type];
+	};
+
+	self.getMix = function(type){
+		return f[type || self.type];
+	};
+}
+
+
+function Distortion(sampleRate) // Based on the famous TubeScreamer.
+{
+	var	hpf1	= new IIRFilter(sampleRate, 720.484),
+		lpf1	= new IIRFilter(sampleRate, 723.431),
+		hpf2	= new IIRFilter(sampleRate, 1.0),
+		smpl	= 0.0;
+	this.gain = 4;
+	this.master = 1;
+	this.sampleRate = sampleRate;
+	this.filters = [hpf1, lpf1, hpf2];
+	this.pushSample = function(s){
+		hpf1.pushSample(s);
+		smpl = hpf1.getMix(1) * this.gain;
+		smpl = Math.atan(smpl) + smpl;
+		if (smpl > 0.4){
+			smpl = 0.4;
+		} else if (smpl < -0.4) {
+			smpl = -0.4;
+		}
+		lpf1.pushSample(smpl);
+		hpf2.pushSample(lpf1.getMix(0));
+		smpl = hpf2.getMix(1) * this.master;
+		return smpl;
+	};
+	this.getMix = function(){
+		return smpl;
+	};
+}
+
+function Compressor(sampleRate, scaleBy, gain){
+	var	self	= this,
+		sample  = 0.0;
+	self.sampleRate	= sampleRate;
+	self.scale	= scaleBy || 1;
+	self.gain	= gain || 0.5;
+	self.pushSample = function(s){
+		s	/= self.scale;
+		sample	= (1 + self.gain) * s - self.gain * s * s * s;
+		return sample;
+	};
+	self.getMix = function(){
+		return sample;
+	};
+}
+
 function AudioEngine() {
 	this.interval;
 	this.samplers = {};
 	this.sequences = {};
 	this.effectsData = {};
 	this.lowpassFilters = {};
+	this.bitCrushers = {};
+	this.distortions = {};
 
 	this.sampleRate = 44100;
 	// tick length is hard coded to 120bpm
@@ -24,6 +131,10 @@ function AudioEngine() {
 	this.overrideProviderKey = undefined;
 
 	this.tickDelay = 32;
+
+	this.outputFilter = new IIRFilter(44100, 5000, 0, 0);
+	this.outputCompressor = new Compressor(44100);
+	this.outputCompressor.gain = 1.0;
 }
 
 AudioEngine.prototype = new EventEmitter();
@@ -41,6 +152,9 @@ AudioEngine.prototype.stop = function() {
 AudioEngine.prototype.addSampler = function( name, sampler ) {
 	this.samplers[name] =  sampler;
 	this.lowpassFilters[name] = new audioLib.LowPassFilter(44100, 2500, 0.5);
+	this.bitCrushers[name] = new BitCrusher(44100, 12);
+	this.distortions[name] = new Distortion(44100);
+	this.distortions[name].gain = 8;
 }
 
 /**
@@ -114,7 +228,6 @@ AudioEngine.prototype.writeAudio = function() {
 					// retrigger
 					this.samplers[seq].envelope.noteOff();
 					this.samplers[seq].reset();
-					console.log("write audio note: " + sequence[ tick % 256 / 8 ]);
 					this.trigger(
 						this.samplers[ seq ],
 						AudioEngine.midiNoteFreq[sequence[ tick % 256 / 8 ] ] + 12
@@ -138,20 +251,36 @@ AudioEngine.prototype.writeAudio = function() {
 					effectsData = this.effectsData[key][tick % 256];
 				}
 				var val1 = effectsData[0];
-				var val2 = effectsData[1];
+				var val2 = 1.-effectsData[1];
 	
-				var cutoff = val2 * 5000;
-		      	var resonance = val1;
+				var cutoff = val1 * 5000 + 500;
+		      	//var resonance = .5*val2 + .3;
+		      	var resonance = 0.8;
 				var lowpassFilter = this.lowpassFilters[key];
 				lowpassFilter.cutoff = cutoff;
 				lowpassFilter.resonance = resonance;
+
+				var bits = val2*24;
+				var bitCrusher = this.bitCrushers[key];
+				bitCrusher.resolution = bits ? Math.pow(2, bits-1) : Math.pow(2, 8-1);
+
+				var distortion = this.distortions[key];
+				distortion.gain = val2*16;
 	
 				for( var j=1; j < buffer.length; j++ ) {
 					buffer[j] = lowpassFilter.pushSample( buffer[j] );
+					buffer[j] = bitCrusher.pushSample( buffer[j] );
+					buffer[j] = distortion.pushSample( buffer[j] );
 				}
 	
-				outBuffer = DSP.mixSampleBuffers(buffer, outBuffer, false, Object.keys(this.samplers).length);
+				outBuffer = DSP.mixSampleBuffers(buffer, outBuffer, false, 1);
 			}
+		}
+
+		this.outputCompressor.scale = Object.keys(this.samplers).length;
+		for (var j=1; j < outBuffer.length; j++) {
+			outBuffer[j] = this.outputCompressor.pushSample(outBuffer[j]);
+			outBuffer[j] = this.outputFilter.pushSample(outBuffer[j]);
 		}
 	}
 
