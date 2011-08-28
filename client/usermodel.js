@@ -12,6 +12,7 @@ var UserModel = (function() {
       var me=this;
 
       me.setVal("name", data.name);
+      me.setVal("userid", data.userid);
       me.notesModel.copy(0, data.notes);
       me.effectsModel.copy(0, data.effects);
     }
