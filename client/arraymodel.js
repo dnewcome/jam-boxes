@@ -34,6 +34,8 @@ var ArrayModel = (function() {
         me.currentIndex++;
         me.currentIndex = me.currentIndex % me.numValues;
 
+		console.log('index: ' + me.currentIndex);
+
         if(oldIndex >= 0) {
           me.emit('tickremove', oldIndex, me.values[oldIndex], me.currentIndex);
         }
@@ -46,7 +48,6 @@ var ArrayModel = (function() {
     // if there is an EffectsBox whose index range does not
     // include the currentIndex)
     updateUI: function(ind) {
-      this.currentIndex = this.currentIndex+1;
     },
 
     // val: value to be set
