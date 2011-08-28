@@ -1,10 +1,13 @@
-var express = require('express');
-var http = require('http'),
+var express = require('express'),
+    http = require('http'),
     io = require('socket.io'),
     MemoryStore = express.session.MemoryStore,
     app = express.createServer(),
     sio = io.listen(app),
-    sessionStore = new MemoryStore();
+    sessionStore = new MemoryStore(),
+    nko = require('nko')('wRA8t4RHBIt43pAw'),
+    app = express.createServer(),
+    io = io.listen(app);
 
 var jams = {};
 

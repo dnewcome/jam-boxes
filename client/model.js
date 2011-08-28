@@ -20,6 +20,19 @@ var Model = (function() {
       $.extend(this, config);
     },
 
+	tick: function() {
+    var me=this,
+        oldIndex = me.currentIndex;
+
+		me.currentIndex = me.currentIndex++;
+    me.currentIndex = me.currentIndex % me.numValues;
+
+    if(oldIndex >= 0) {
+      me.emit('tickremove', oldIndex, me.values[oldIndex], me.currentIndex);
+    }
+		me.emit('tickupdate', me.currentIndex, me.values[me.currentIndex]);
+	},
+
     // val: value to be set
     // ind: index of the value to be set
     // shouldUpdate: whether or not the UI should receive an update notification
@@ -42,7 +55,5 @@ var Model = (function() {
 
   });
 
-
   return Model;
-
 }());

@@ -8,20 +8,22 @@ notesBoxRegistry = new NotesBoxRegistry();
 
 var NotesBox = (function() {
   var NOTES = 10;
-  //var SELECTED_COLOR = '90-#66ddf3-#15bfde';
   var SELECTED_COLOR = '90-#e63d91-#e128d9';
+  var SELECTED_COLOR_HIGHLIGHT = '90-#e486b5-#f75af0';
   var CLEAR_COLOR = '#fff';
   var NORMAL_STROKE = '#e63d91';
   var NORMAL_STROKE_WIDTH = 2;
   var DROPPABLE_STROKE = '#ffffff';
   var DROPPABLE_STROKE_WIDTH = 4;
   var ZOOM_FACTOR = 3;
+  var OUTER_COLOR = '90-#f1ff14-#f8ff8d';
+  var OUTER_COLOR_HIGHLIGHT = '90-#f6ff63-#fdffdd';
 
   function createOuter() {
     var me = this,
         paper = me.paper,
         outer = me.outer = paper.rect(me.xpos, me.ypos, me.width, me.height,
-      10).attr({ fill: '90-#f1ff14-#f8ff8d' });
+      10).attr({ fill: OUTER_COLOR });
 
     me.leaveDrop();
 
@@ -32,7 +34,7 @@ var NotesBox = (function() {
   function createInner() {
     var me = this,
         paper = me.paper,
-        noteBoxes = me.noteBoxes,
+        columnBoxes = me.columnBoxes,
         innerXOffset = (me.width - me.innerWidth)/2,
         innerYOffset = (me.height - me.innerHeight)/2,
         innerStartX = me.xpos + innerXOffset,
@@ -47,7 +49,7 @@ var NotesBox = (function() {
     for (var i=0; i < me.notesPerMeasure; ++i) {
       // this is the offset into the model
       var dataI = i + me.ind;
-      noteBoxes[dataI] = [];
+      columnBoxes[dataI] = [];
       for (var j=0; j < NOTES; ++j) {
         var x = innerStartX + i * BEAT_WIDTH,
             y = innerStartY + j * NOTE_HEIGHT,
@@ -59,7 +61,7 @@ var NotesBox = (function() {
         $(note.node).bind('click', me.onNoteClick.bind(me, dataI, j));
 
         me.trackEl(note);
-        noteBoxes[dataI][j] = note;
+        columnBoxes[dataI][j] = note;
       }
     }
 
@@ -73,12 +75,14 @@ var NotesBox = (function() {
   $.extend(Box.prototype, {
     init: function(config) {
       var me=this;
-      me.noteBoxes = [];
+      me.columnBoxes = [];
 
       Shape.prototype.init.call(me, config);
 
       $(window).bind("click", me.onPaperClick.bind(me));
       me.data.on("update", me.onModelUpdate.bind(me));
+      me.data.on("tickremove", me.onTickRemove.bind(me));
+      me.data.on("tickupdate", me.onTickUpdate.bind(me));
       me.setEditable(false);
       me.updateFromData();
     },
@@ -147,26 +151,76 @@ var NotesBox = (function() {
     },
 
     updateNoteDisplay: function(note, selected) {
-      if(selected !== note.selected) {
-        note.attr({
-          stroke: selected ? '#000000' : 'none',
-          /*'stroke-opacity': 0.5,*/
-          fill: selected ? SELECTED_COLOR : CLEAR_COLOR,
-          'fill-opacity': selected ? 1.0 : 0.001
-        });
-        note.selected = selected;
-      }
+      note.attr({
+        stroke: selected ? '#000000' : 'none',
+        /*'stroke-opacity': 0.5,*/
+        fill: selected ? SELECTED_COLOR : CLEAR_COLOR,
+        'fill-opacity': selected ? 1.0 : 0.001
+      });
     },
 
     onModelUpdate: function(index, value) {
       var me=this,
-          noteBoxes = me.noteBoxes[index];
+      	  data = me.data,
+          columnBoxes = me.columnBoxes[index],
+          ind = me.ind;
 
-      if (noteBoxes) {
-        noteBoxes.forEach(function(note, j) {
-          var selected = value === j;
-          me.updateNoteDisplay(note, selected);
-        });
+      if (columnBoxes) {
+          columnBoxes.forEach(function(note, j) {
+            var selected = value === j;
+            me.updateNoteDisplay(note, selected);
+          });
+      }
+    },
+
+    onTickRemove: function(index, value, newIndex) {
+      var me=this,
+      	  data = me.data,
+          columnBoxes = me.columnBoxes[index],
+          ind = me.ind;
+
+      // We handled the last row,
+      if (columnBoxes) {
+        // Get rid of old box if it is not us.
+        if(!me.columnBoxes[newIndex]) {
+          me.outer.fill = OUTER_COLOR;
+          me.outer.attr({fill: OUTER_COLOR});
+        }
+
+        if ("undefined" !== typeof value) {
+          var note = columnBoxes[value];
+
+          if (note.fill != SELECTED_COLOR) {
+            note.fill = SELECTED_COLOR;
+            note.attr({fill: SELECTED_COLOR});
+          }
+        }
+      }
+
+    },
+
+    onTickUpdate: function(index, value) {
+      var me=this,
+      	  data = me.data,
+          columnBoxes = me.columnBoxes[index],
+          ind = me.ind;
+
+      // Current box is selected
+      if (columnBoxes) {
+        if (me.outer.fill != OUTER_COLOR_HIGHLIGHT) {
+          // select new box
+          me.outer.fill = OUTER_COLOR_HIGHLIGHT;
+          me.outer.attr({fill: OUTER_COLOR_HIGHLIGHT});
+        }
+
+        if ("undefined" !== typeof value) {
+          var note = columnBoxes[value];
+
+          if (note.fill != SELECTED_COLOR_HIGHLIGHT) {
+            note.fill = SELECTED_COLOR_HIGHLIGHT;
+            note.attr({fill: SELECTED_COLOR_HIGHLIGHT});
+          }
+        }
       }
     },
 
