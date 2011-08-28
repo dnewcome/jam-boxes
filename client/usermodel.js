@@ -17,6 +17,9 @@ var UserModel = (function() {
         if(localStorage.localUserName) {
           values.name = localStorage.localUserName;
         }
+
+        values.returning = !!localStorage.returning;
+        localStorage.returning = true;
       }
       Model.prototype.init.call(me, config);
     },

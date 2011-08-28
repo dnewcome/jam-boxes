@@ -182,12 +182,14 @@
     model = createUser(userData);
     users.local = model;
 
-	var headphones = paper.image("headphones.png", CANVAS_WIDTH/2-300/2, 0, 300, 300);
-	setTimeout(function() {
-		headphones.animate({opacity: 0.0}, 3000, "<", function() {
-			this.remove();
-		});
-	}, 1000);
+  if(!model.getVal("returning")) {
+    var headphones = paper.image("headphones.png", CANVAS_WIDTH/2-300/2, 0, 300, 300);
+    setTimeout(function() {
+      headphones.animate({opacity: 0.0}, 3000, "<", function() {
+        this.remove();
+      });
+    }, 1000);
+  }
 
 
 	var svgstartbutton = new TransportButton( {
