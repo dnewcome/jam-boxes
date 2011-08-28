@@ -140,14 +140,16 @@
     window.paper = Raphael('canvas', CANVAS_WIDTH, 600);
 
 	var userNotes = [];
-    createUser(0, {
+	// this is global... FIXME
+	userData =  {
       ownerId: 0,
       name: 'Jeremy',
       mute: false,
       solo: true,
       notes: userNotes,
       effects: {}
-    });
+    };
+    createUser(0, userData );
 
     var fakeNoteData = [], i;
     for (i = 0; i < TOTAL_BEATS; ++i) {
