@@ -99,7 +99,8 @@
         effectsData = userData.effects,
         effectsModel = createEffectsModel(ownerId, effectsData),
         userModel = createUserModel(ownerId, userData),
-        ypos = getYPos(rowIndex);
+        ypos = getYPos(rowIndex),
+        network = new Network();
 
     createUserView(userModel, ypos);
 
