@@ -9,7 +9,7 @@ function EffectsBoxRegistry() {
 effectsBoxRegistry = new EffectsBoxRegistry();
 
 // there is one EffectsData model per user, which keeps track of the effects values
-function EffectsData(ownerId, measures, notesPerMeasure) {
+function EffectsData(ownerId, measures, notesPerMeasure, audioEngine) {
 	var that = this;
 
 	this.unitsPerNote = 8;
@@ -86,7 +86,7 @@ function EffectsData(ownerId, measures, notesPerMeasure) {
 		}
 	};
 
-  $(window).bind('tick', this.tick.bind(this));
+  audioEngine.on('tick', this.tick.bind(this));
 }
 
 EffectsData.prototype = new EventEmitter();

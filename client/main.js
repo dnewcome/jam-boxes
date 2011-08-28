@@ -45,7 +45,7 @@
 
   function createEffectsModel(ownerId, effectsData) {
     // TODO - make use of the effectsData once we have it.
-    return new EffectsData(ownerId, MEASURES, NOTES_PER_MEASURE);
+    return new EffectsData(ownerId, MEASURES, NOTES_PER_MEASURE, ae);
   }
 
   function createMeasureEffectsView(effectsModel, i, xpos, ypos) {
@@ -98,22 +98,26 @@
 
     createUserView(userModel, ypos);
 
-	this.effectsController = createEffectsController(effectsModel, getXPos(MEASURES)+MEASURE_MARGIN, ypos);
+    this.effectsController = createEffectsController(effectsModel,
+      getXPos(MEASURES)+MEASURE_MARGIN, ypos);
 
-	if (ownerId === 0) {
-		$(window).bind("mouseup", that.effectsController.onMouseUp);
-	}
+    if (ownerId === 0) {
+      $(window).bind("mouseup", that.effectsController.onMouseUp);
+    }
 
     for (var i = 0; i < MEASURES; ++i) {
       var xpos = getXPos(i);
       createMeasureNotesView(notesModel, i, xpos, ypos);
       createMeasureEffectsView(effectsModel, i, xpos, ypos);
     }
+
+    // ae is the audio engine instance
+    ae.addSequence(SAMPLES[rowIndex], noteData);
   }
 
 
   function createEditableEffectsBox() {
-    var effectsData = new EffectsData(1, MEASURES, NOTES_PER_MEASURE);
+    var effectsData = new EffectsData(1, MEASURES, NOTES_PER_MEASURE, ae);
     var effectsBox = new EffectsBox(400, 400, BOX_OUTER_WIDTH,
       BOX_OUTER_HEIGHT, 0, effectsData);
 
@@ -125,22 +129,10 @@
     effectsBoxRegistry.boxes.push(effectsBox);
   }
 
-  function startTick() {
-    function effectsTick() {
-      $(window).trigger('tick');
-    }
-
-    effectsTick();
-    setInterval(effectsTick, 10);
-  }
-
   function main() {
     window.paper = Raphael('canvas', CANVAS_WIDTH, 600);
 
 	var userNotes = [];
-	// ae is the audio engine instance
-	ae.addSequence(	'cymbal', userNotes );
-
     createUser(0, {
       ownerId: 0,
       name: 'Jeremy',
@@ -164,7 +156,6 @@
     });
 
     createEditableEffectsBox();
-    startTick();
   }
 
   $(main);
