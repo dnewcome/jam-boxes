@@ -135,19 +135,6 @@
   }
 
 
-  function createEditableEffectsBox(effectsData) {
-    var effectsData = new EffectsData(effectsData, 0, MEASURES, NOTES_PER_MEASURE, ae);
-    var effectsBox = new EffectsBox(400, 400, BOX_OUTER_WIDTH,
-      BOX_OUTER_HEIGHT, 0, effectsData);
-
-    for (var i=0; i<effectsData.notesPerBox*effectsData.unitsPerNote; i++) {
-      var percent = i/(effectsData.notesPerBox*effectsData.unitsPerNote);
-      effectsData.values[i] = [percent, percent];
-    }
-
-    effectsBoxRegistry.boxes.push(effectsBox);
-  }
-
   function main() {
     window.paper = Raphael('canvas', CANVAS_WIDTH, 600);
 
@@ -180,7 +167,6 @@
       effects: effectsData
     };
     createUser(userData);
-    createEditableEffectsBox(effectsData);
 
 	var headphones = paper.image("headphones.png", CANVAS_WIDTH/2-300/2, 0, 300, 300);
 	setTimeout(function() {
