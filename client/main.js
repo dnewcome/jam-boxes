@@ -170,6 +170,11 @@
 		1,5,null,null
 	];
     var effectsData = [];
+	for( var i=0; i < 256; i++ ) {
+		var x = Math.sin(i*1/256/2*Math.PI);
+		var y = Math.cos(i*1/256/2*Math.PI);
+		effectsData.push( [ x, y ] );
+	}
 
 	  // this is global... FIXME
     userData = {
