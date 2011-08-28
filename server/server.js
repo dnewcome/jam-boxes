@@ -15,6 +15,9 @@ sio.sockets.on('connection', function( socket ) {
     socket.on('broadcast', function( data ) {
       //console.log( 'socket.io broadcast ' + data );
       data.userid = userid;
+      if(data.name === "Enter your name") {
+        data.name = "Unknown User";
+      }
       socket.broadcast.to( data.roomid ).emit( 'userupdate', data );
     });
 
