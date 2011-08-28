@@ -3,6 +3,7 @@ function AudioEngine() {
 	this.samplers = {};
 	this.sequences = {};
 	this.effectsData = {};
+	this.lowpassFilters = {};
 
 	this.sampleRate = 44100;
 	// tick length is hard coded to 120bpm
@@ -16,6 +17,8 @@ function AudioEngine() {
 	this.output.mozSetup( 1, this.sampleRate );
 
 	this.tick = 0;
+	this.numSamplesWritten = 0;
+	this.prebufferSize = this.sampleRate/2;
 }
 
 AudioEngine.prototype = new EventEmitter();
@@ -32,6 +35,7 @@ AudioEngine.prototype.stop = function() {
 
 AudioEngine.prototype.addSampler = function( name, sampler ) {
 	this.samplers[name] =  sampler;
+	this.lowpassFilters[name] = new audioLib.LowPassFilter(44100, 2500, 0.5);
 }
 
 /**
@@ -77,7 +81,10 @@ AudioEngine.prototype.addEffectsData = function( name, cc ) {
 AudioEngine.prototype.audioWriter = function() {
 	this.emit( 'tick', this.tick );
 	// start out with empty buffer
-	var additiveSignal = new Float32Array(this.bufferSize);
+	var outBuffer = new Float32Array(this.bufferSize);
+	for (var i=0; i<this.bufferSize; i++) {
+		outBuffer[i] = 0;
+	}
 
 	// take a look at tick position to find out if we need to
 	// trigger any generators
@@ -96,44 +103,63 @@ AudioEngine.prototype.audioWriter = function() {
 				);
 			}
 		}
-
 	}
 
 	// generate the sample data for any playing generators
-	for( var i in this.samplers ) {
-		var s = this.samplers[i];
-		if ( s.envelope.isActive() ) {
-			s.generate();
-			var buffer = s.applyEnvelope();
+	for( var key in this.samplers ) {
+		var sampler = this.samplers[key];
+		if ( sampler.envelope.isActive() ) {
+			sampler.generate();
+			var buffer = sampler.applyEnvelope();
 
-			// cheap low pass filter from audiolib.
-			// TODO: the effects data is not initialized yet
-      var set = this.effectsData[i][this.tick % 256];
-			var cutoff = set[1] * 5000;
-      var resonance = set[0];
-			var flt = new audioLib.LowPassFilter(44100, cutoff, resonance);
+			var effectsData = this.effectsData[key][this.tick % 256];
+			var val1 = effectsData[0];
+			var val2 = effectsData[1];
+
+			var cutoff = val2 * 5000;
+	      	var resonance = val1;
+			var lowpassFilter = this.lowpassFilters[key];
+			lowpassFilter.cutoff = cutoff;
+			lowpassFilter.resonance = resonance;
+
 			for( var j=1; j < buffer.length; j++ ) {
-				flt.pushSample( buffer[j] );
-				buffer[j] = flt.getMix();
+				buffer[j] = lowpassFilter.pushSample( buffer[j] );
 			}
 
-			this.mix( buffer, additiveSignal );
+			outBuffer = DSP.mixSampleBuffers(buffer, outBuffer, false, Object.keys(this.samplers).length);
 		}
 	}
 
-	this.output.mozWriteAudio(additiveSignal);
+	// flush the buffer
+    this.output.mozWriteAudio([]);
+
+	var numSamplesLeft = outBuffer.length;
+	while (numSamplesLeft > 0) {
+		var numSamplesWritten = this.output.mozWriteAudio(outBuffer);
+		this.numSamplesWritten = this.numSamplesWritten + numSamplesWritten;
+		numSamplesLeft = numSamplesLeft - numSamplesWritten;
+		outBuffer = outBuffer.subarray(numSamplesWritten);
+	}
 
 	this.tick++;
+
+	var currentPosition = this.output.mozCurrentSampleOffset();
+
+	var available = currentPosition + this.prebufferSize - this.numSamplesWritten;
+
+	if (available > 0) {
+		this.audioWriter();
+	}
 };
 
 AudioEngine.prototype.trigger = function( sampler, freq ) {
   sampler.envelope.noteOn();
   sampler.setFreq(freq);
 
-	setTimeout( function() {
+/*	setTimeout( function() {
 	  sampler.envelope.noteOff();
 		sampler.reset();
-	}, 1000);
+	}, 1000);*/
   }
 
 
