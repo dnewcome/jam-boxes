@@ -118,6 +118,7 @@
 
     // ae is the audio engine instance
     ae.addSequence(SAMPLES[rowIndex], noteData);
+    ae.addEffectsData(SAMPLES[rowIndex], effectsData);
   }
 
 

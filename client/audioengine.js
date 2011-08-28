@@ -2,6 +2,7 @@ function AudioEngine() {
 	this.interval;
 	this.samplers = {};
 	this.sequences = {};
+	this.effectsData = {};
 
 	this.sampleRate = 44100;
 	// tick length is hard coded to 120bpm
@@ -69,6 +70,9 @@ AudioEngine.prototype.addSequence = function( name, seq ) {
 	this.sequences[name] = seq;
 }
 
+AudioEngine.prototype.addEffectsData = function( name, cc ) {
+	this.effectsData[name] = cc;
+}
 
 AudioEngine.prototype.audioWriter = function() {
 	this.emit( 'tick', this.tick );	
@@ -103,7 +107,9 @@ AudioEngine.prototype.audioWriter = function() {
 			var buffer = s.applyEnvelope();
 
 			// cheap low pass filter from audiolib.
-			var flt = new audioLib.LowPassFilter(44100, 2000, 1.0);
+			// TODO: the effects data is not initialized yet
+			// var cutoff = this.effectsData[seq][this.tick % 256].y * 5000;
+			var flt = new audioLib.LowPassFilter(44100, 20000, 1.0);
 			for( var j=1; j < buffer.length; j++ ) {
 				flt.pushSample( buffer[j] );
 				buffer[j] = flt.getMix();
