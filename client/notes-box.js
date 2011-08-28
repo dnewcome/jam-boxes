@@ -219,6 +219,7 @@ var NotesBox = (function() {
         }
 
         if ("undefined" !== typeof value && value !== null) {
+       	  console.log('play: ' + value);
           var note = columnBoxes[getNoteIndex(value)];
 
           if (note.fill != SELECTED_COLOR_HIGHLIGHT) {

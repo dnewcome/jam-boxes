@@ -129,11 +129,15 @@ function AudioEngine() {
 	this.tick = 0;
 	this.numSamplesWritten = 0;
 	this.prebufferSize = this.sampleRate/2;
+//	this.prebufferSize = 44100 * 0.020;
+//	this.autoLatency = true;
+//	this.started = new Date().valueOf();
 
 	this.overrideProvider = undefined;
 	this.overrideProviderKey = undefined;
 
 	this.tickDelay = 32;
+//	this.tickDelay = 0;
 
 	this.outputFilter = new IIRFilter(44100, 5000, 0, 0);
 	this.outputCompressor = new Compressor(44100);
@@ -219,11 +223,13 @@ AudioEngine.prototype.addEffectsData = function( name, cc ) {
 
 AudioEngine.prototype.updateAudio = function() {
 	var tick = this.tick - this.tickDelay;
+
 	if (tick >=0) {
 		this.emit('tick', tick);
 	}
 
 	this.writeAudio();
+
 	this.tick++;
 }
 
@@ -319,6 +325,13 @@ AudioEngine.prototype.writeAudio = function() {
 	}
 
 	var currentPosition = this.output.mozCurrentSampleOffset();
+
+/*	if (this.autoLatency) {
+		this.prebufferSize = Math.floor(44100 * (new Date().valueOf() - this.started) / 1000);
+		if (currentPosition) { // Play position moved?
+			this.autoLatency = false;
+		}
+	}*/
 
 	var available = currentPosition + this.prebufferSize - this.numSamplesWritten;
 
