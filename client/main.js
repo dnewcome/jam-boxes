@@ -85,7 +85,7 @@
   }
 
   function getYPos(rowIndex) {
-    return (rowIndex * (2 * (BOX_OUTER_HEIGHT + 2*MEASURE_MARGIN)) + 70);
+    return (rowIndex * (2 * (BOX_OUTER_HEIGHT + 2*MEASURE_MARGIN)) + 90);
   }
 
   function getXPos(colIndex) {
@@ -154,7 +154,16 @@
       }
     });
 
-    var userNotes = [];
+    var userNotes = [
+		1,null,null,null,
+		1,null,null,null,
+		1,null,null,null,
+		1,3,null,null,
+		1,null,null,null,
+		1,null,null,null,
+		1,null,null,null,
+		1,5,null,null
+	];
     var effectsData = [];
 
 	  // this is global... FIXME
@@ -174,6 +183,34 @@
 			this.remove();
 		});
 	}, 1000);
+
+
+	var svgstartbutton = new TransportButton( {
+      text: 'Start',
+      onclick: function() { ae.start(); },
+      color: '90-#00ff00-#f8ff8d',
+      paper: paper,
+      xpos: 12,
+      ypos: 10,
+      width: BOX_OUTER_WIDTH*2,
+      height: BOX_OUTER_HEIGHT,
+      innerWidth: BOX_INNER_WIDTH,
+      innerHeight: BOX_INNER_HEIGHT
+	} );
+
+	var svgstopbutton = new TransportButton( {
+      text: 'Stop',
+      onclick: function() { ae.stop(); },
+      color: '90-#f10014-#f8ff8d',
+      paper: paper,
+      xpos: 158,
+      ypos: 10,
+      width: BOX_OUTER_WIDTH*2,
+      height: BOX_OUTER_HEIGHT,
+      innerWidth: BOX_INNER_WIDTH,
+      innerHeight: BOX_INNER_HEIGHT
+	} );
+
   }
 
   $(main);
