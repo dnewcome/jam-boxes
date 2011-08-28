@@ -187,7 +187,7 @@ app.configure(function() {
 });
 
 app.get('/', function(req, res){
-    res.render( 'jams.jade', { jams:jams } );
+    res.redirect( '/app.html' );
 });
 
 // app.listen( 3000 );
