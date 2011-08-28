@@ -50,8 +50,9 @@ var UserView = (function() {
 
 	  this.setMute = function (isMute) {
 	  	me.data.setVal("mute", isMute);
+	  	
+	  	me.data.emit("mute", me.data.getVal("ownerId"), isMute);
         if (isMute) {
-        	//me.root.find("[name=mute]").id = 'muteActive';
         	me.root.find('.mute').removeClass('muteInactive');
         	me.root.find('.mute').addClass('muteActive');
 
@@ -67,6 +68,7 @@ var UserView = (function() {
 
 	  this.setSolo = function(isSolo) {
 	  	me.data.setVal("solo", isSolo);
+	  	me.data.emit("solo", me.data.getVal("ownerId"), isSolo);
         if (isSolo) {
         	me.root.find('.solo').removeClass('soloInactive');
         	me.root.find('.solo').addClass('soloActive');
