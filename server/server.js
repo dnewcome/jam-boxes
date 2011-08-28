@@ -40,6 +40,7 @@ app.configure(function() {
   app.use(express.bodyParser());
   app.use(express.static( __dirname + '/static' ));
   app.use(express.static( __dirname + './../client' ));
+  app.set('views', __dirname + '/views');
   app.use(express.cookieParser());
   app.use(express.session({
     store: sessionStore,
