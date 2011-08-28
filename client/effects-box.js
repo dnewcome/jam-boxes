@@ -9,7 +9,7 @@ function EffectsBoxRegistry() {
 effectsBoxRegistry = new EffectsBoxRegistry();
 
 // there is one EffectsData model per user, which keeps track of the effects values
-function EffectsData(ownerId, measures, notesPerMeasure, timer) {
+function EffectsData(ownerId, measures, notesPerMeasure, audioEngine) {
 	var that = this;
 
 	this.unitsPerNote = 8;
@@ -23,7 +23,7 @@ function EffectsData(ownerId, measures, notesPerMeasure, timer) {
 	this.values = [];	// each value is of the form [x, y], where x and y are between 0-1 inclusive
 
 	this.numValues = this.unitsPerNote*this.notesPerBox*this.numBoxes;
-	this.currentIndex = 0;	// this should be between 0 and (this.numValues-1) inclusive
+	this.currentIndex = -1;	// this should be between 0 and (this.numValues-1) inclusive
 
 	for (var i=0; i<this.numValues; i++) {
 		this.values[i] = [0.5, 0.5];
@@ -86,7 +86,7 @@ function EffectsData(ownerId, measures, notesPerMeasure, timer) {
 		}
 	};
 
-  timer.on('tick', this.tick.bind(this));
+  audioEngine.on('tick', this.tick.bind(this));
 }
 
 EffectsData.prototype = new EventEmitter();
@@ -100,6 +100,8 @@ EffectsData.prototype.tick = function() {
 	if (typeof this.overrideProvider !== 'undefined') {
 		this.values[this.currentIndex] = this.overrideProvider.getOverrideValue();
 	}
+
+	//console.log("effects: " + this.currentIndex);
 
 	this.emit('update', this.currentIndex, this.values[this.currentIndex]);
 }
@@ -179,7 +181,7 @@ function EffectsBox(x, y, width, height, ind, data) {
 	data.on('update', function(ind, val) {
 		if (that.data.boxForIndex(ind) == that.ind) {
 			if (that.mainBox.fill != that.mainBoxAttrHighlight.fill) {
-        that.mainBox.fill = that.mainBoxAttrHighlight.fill;
+		        that.mainBox.fill = that.mainBoxAttrHighlight.fill;
 				that.mainBox.attr({fill: that.mainBoxAttrHighlight.fill});
 			}
 			var newX = that.xpos + val[0]*(that.width-16) + 5;
@@ -190,7 +192,7 @@ function EffectsBox(x, y, width, height, ind, data) {
 		}
 		else {
 			if (that.mainBox.fill != that.mainBoxAttr.fill) {
-        that.mainBox.fill = that.mainBoxAttr.fill;
+		        that.mainBox.fill = that.mainBoxAttr.fill;
 				that.mainBox.attr({fill: that.mainBoxAttr.fill});
 			}
 		}

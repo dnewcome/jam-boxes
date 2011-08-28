@@ -8,20 +8,22 @@ notesBoxRegistry = new NotesBoxRegistry();
 
 var NotesBox = (function() {
   var NOTES = 10;
-  //var SELECTED_COLOR = '90-#66ddf3-#15bfde';
   var SELECTED_COLOR = '90-#e63d91-#e128d9';
+  var SELECTED_COLOR_HIGHLIGHT = '90-#e486b5-#f75af0';
   var CLEAR_COLOR = '#fff';
   var NORMAL_STROKE = '#e63d91';
   var NORMAL_STROKE_WIDTH = 2;
   var DROPPABLE_STROKE = '#ffffff';
   var DROPPABLE_STROKE_WIDTH = 4;
   var ZOOM_FACTOR = 3;
+  var OUTER_COLOR = '90-#f1ff14-#f8ff8d';
+  var OUTER_COLOR_HIGHLIGHT = '90-#f6ff63-#fdffdd';
 
   function createOuter() {
     var me = this,
         paper = me.paper,
         outer = me.outer = paper.rect(me.xpos, me.ypos, me.width, me.height,
-      10).attr({ fill: '90-#f1ff14-#f8ff8d' });
+      10).attr({ fill: OUTER_COLOR });
 
     me.leaveDrop();
 
@@ -147,27 +149,39 @@ var NotesBox = (function() {
     },
 
     updateNoteDisplay: function(note, selected) {
-      if(selected !== note.selected) {
-        note.attr({
-          stroke: selected ? '#000000' : 'none',
-          /*'stroke-opacity': 0.5,*/
-          fill: selected ? SELECTED_COLOR : CLEAR_COLOR,
-          'fill-opacity': selected ? 1.0 : 0.001
-        });
-        note.selected = selected;
-      }
+      note.attr({
+        stroke: selected ? '#000000' : 'none',
+        /*'stroke-opacity': 0.5,*/
+        fill: selected ? SELECTED_COLOR : CLEAR_COLOR,
+        'fill-opacity': selected ? 1.0 : 0.001
+      });
     },
 
     onModelUpdate: function(index, value) {
       var me=this,
-          noteBoxes = me.noteBoxes[index];
+      	  data = me.data,
+          noteBoxes = me.noteBoxes[index],
+          ind = me.ind;
 
-      if (noteBoxes) {
-        noteBoxes.forEach(function(note, j) {
-          var selected = value === j;
-          me.updateNoteDisplay(note, selected);
-        });
-      }
+	  if (noteBoxes) {
+	      noteBoxes.forEach(function(note, j) {
+    	    var selected = value === j;
+        	me.updateNoteDisplay(note, selected);
+      	});
+	  }
+
+	  if (data.currentIndex >= 0 && data.currentIndex >= ind && data.currentIndex < ind + me.notesPerMeasure) {
+	  	if (me.outer.fill != OUTER_COLOR_HIGHLIGHT) {
+		  me.outer.fill = OUTER_COLOR_HIGHLIGHT;
+		  me.outer.attr({fill: OUTER_COLOR_HIGHLIGHT});
+		}
+	  }
+	  else {
+	  	if (me.outer.fill != OUTER_COLOR) {
+		  me.outer.fill = OUTER_COLOR;
+		  me.outer.attr({fill: OUTER_COLOR});
+		}
+	  }
     },
 
     onNoteClick: function(x, y, event) {
