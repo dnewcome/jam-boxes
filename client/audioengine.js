@@ -8,7 +8,7 @@ function AudioEngine() {
 	// tick length is hard coded to 120bpm
 	// ends up being about 62ms
 	this.tickTime = 120/60/16/8*1000;
-	this.bufferTime = this.tickTime; 
+	this.bufferTime = this.tickTime;
 	this.bufferSize = Math.floor(this.tickTime/1000*this.sampleRate);
 
       // Setup audio channel
@@ -22,9 +22,9 @@ AudioEngine.prototype = new EventEmitter();
 
 AudioEngine.prototype.start = function() {
 	var me = this;
-	this.interval = setInterval( function() { 	
-		me.audioWriter(); 
-	}, this.bufferTime ); 
+	this.interval = setInterval( function() {
+		me.audioWriter();
+	}, this.bufferTime );
 }
 AudioEngine.prototype.stop = function() {
 	clearInterval( this.interval );
@@ -35,7 +35,7 @@ AudioEngine.prototype.addSampler = function( name, sampler ) {
 }
 
 /**
- * convenience method for creating a new sampler and 
+ * convenience method for creating a new sampler and
  * adding it to the list of audio generators.
  * The name is used when looking for performance data
  */
@@ -43,7 +43,7 @@ AudioEngine.prototype.createSampler = function( name, wavfile ) {
 	var s = new Sampler(wavfile, this.bufferSize, this.sampleRate);
 	s.envelope = new ADSR(0, 0, 1, Infinity, 0, this.sampleRate);
 	// turn off so it does not trigger immediately
-	s.envelope.disable(); 
+	s.envelope.disable();
 	this.addSampler( name, s );
 }
 
@@ -57,7 +57,7 @@ AudioEngine.midiNoteFreq = [
 	523.25,   554.37,   587.33,   622.25,   659.26,   698.46,   739.99,   783.99,   830.61,   880,   932.33,   987.77,
 	1046.5,   1108.73,  1174.66,  1244.51,  1318.51,  1396.91,  1479.98,  1567.98,  1661.22,  1760,  1864.66,  1975.53,
 	2093,     2217.46,  2349.32,  2489.02,  2637.02,  2793.83,  2959.96,  3135.96,  3322.44,  3520,  3729.31,  3951.07,
-	4186.01,  4434.92,  4698.64,  4978 
+	4186.01,  4434.92,  4698.64,  4978
 ];
 
 
@@ -75,13 +75,13 @@ AudioEngine.prototype.addEffectsData = function( name, cc ) {
 }
 
 AudioEngine.prototype.audioWriter = function() {
-	this.emit( 'tick', this.tick );	
+	this.emit( 'tick', this.tick );
 	// start out with empty buffer
 	var additiveSignal = new Float32Array(this.bufferSize);
 
-	// take a look at tick position to find out if we need to 
+	// take a look at tick position to find out if we need to
 	// trigger any generators
-	
+
 	if( this.tick % 8 == 0 ) {
 		for( var seq in this.sequences ) {
 			var sequence = this.sequences[ seq ];
@@ -90,15 +90,15 @@ AudioEngine.prototype.audioWriter = function() {
 				// retrigger
 				this.samplers[seq].envelope.noteOff();
 				this.samplers[seq].reset();
-				this.trigger( 
+				this.trigger(
 					this.samplers[ seq ],
-					AudioEngine.midiNoteFreq[sequence[ this.tick % 256 / 8 ] ] + 12 
+					AudioEngine.midiNoteFreq[sequence[ this.tick % 256 / 8 ] ] + 12
 				);
 			}
 		}
 
 	}
-  
+
 	// generate the sample data for any playing generators
 	for( var i in this.samplers ) {
 		var s = this.samplers[i];
@@ -108,8 +108,10 @@ AudioEngine.prototype.audioWriter = function() {
 
 			// cheap low pass filter from audiolib.
 			// TODO: the effects data is not initialized yet
-			// var cutoff = this.effectsData[seq][this.tick % 256].y * 5000;
-			var flt = new audioLib.LowPassFilter(44100, 20000, 1.0);
+      var set = this.effectsData[i][this.tick % 256];
+			var cutoff = set[1] * 5000;
+      var resonance = set[0];
+			var flt = new audioLib.LowPassFilter(44100, cutoff, resonance);
 			for( var j=1; j < buffer.length; j++ ) {
 				flt.pushSample( buffer[j] );
 				buffer[j] = flt.getMix();
@@ -134,11 +136,11 @@ AudioEngine.prototype.trigger = function( sampler, freq ) {
 	}, 1000);
   }
 
-      
+
 // mix buf1 into buf2
 AudioEngine.prototype.mix = function( buf1, buf2 ) {
 	for( var i=0; i < buf1.length; i++ ) {
 		buf2[i] = ( buf1[i] + buf2[i] ) / 2;
-	}	
+	}
 }
 

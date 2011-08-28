@@ -49,8 +49,7 @@
   }
 
   function createEffectsModel(ownerId, effectsData) {
-    // TODO - make use of the effectsData once we have it.
-    return new EffectsData(ownerId, MEASURES, NOTES_PER_MEASURE, ae);
+    return new EffectsData(effectsData, ownerId, MEASURES, NOTES_PER_MEASURE, ae);
   }
 
   function createMeasureEffectsView(effectsModel, i, xpos, ypos) {
@@ -123,8 +122,8 @@
   }
 
 
-  function createEditableEffectsBox() {
-    var effectsData = new EffectsData(1, MEASURES, NOTES_PER_MEASURE, ae);
+  function createEditableEffectsBox(effectsData) {
+    var effectsData = new EffectsData(effectsData, 0, MEASURES, NOTES_PER_MEASURE, ae);
     var effectsBox = new EffectsBox(400, 400, BOX_OUTER_WIDTH,
       BOX_OUTER_HEIGHT, 0, effectsData);
 
@@ -139,32 +138,37 @@
   function main() {
     window.paper = Raphael('canvas', CANVAS_WIDTH, 600);
 
-	var userNotes = [];
+    var userNotes = [];
+    var effectsData = [];
+
 	// this is global... FIXME
-	userData =  {
+    userData = {
       ownerId: 0,
       name: 'Jeremy',
       mute: false,
       solo: true,
       notes: userNotes,
-      effects: {}
+      effects: effectsData
     };
     createUser(0, userData );
+
+    createEditableEffectsBox(effectsData);
 
     var fakeNoteData = [], i;
     for (i = 0; i < TOTAL_BEATS; ++i) {
       fakeNoteData[i] = ~~(Math.random() * 10);
     }
+
+    var secondEffectsData = [];
     createUser(1, {
       ownerId: 1,
       name: 'Dan',
       mute: false,
       solo: false,
       notes: fakeNoteData,
-      effects: {}
+      effects: secondEffectsData
     });
 
-    createEditableEffectsBox();
   }
 
   $(main);
