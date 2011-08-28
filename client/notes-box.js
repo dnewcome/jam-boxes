@@ -147,12 +147,15 @@ var NotesBox = (function() {
     },
 
     updateNoteDisplay: function(note, selected) {
-      note.attr({
-        stroke: selected ? '#000000' : 'none',
-        /*'stroke-opacity': 0.5,*/
-        fill: selected ? SELECTED_COLOR : CLEAR_COLOR,
-        'fill-opacity': selected ? 1.0 : 0.001
-      });
+      if(selected !== note.selected) {
+        note.attr({
+          stroke: selected ? '#000000' : 'none',
+          /*'stroke-opacity': 0.5,*/
+          fill: selected ? SELECTED_COLOR : CLEAR_COLOR,
+          'fill-opacity': selected ? 1.0 : 0.001
+        });
+        note.selected = selected;
+      }
     },
 
     onModelUpdate: function(index, value) {
