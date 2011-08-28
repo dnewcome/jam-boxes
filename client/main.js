@@ -94,7 +94,7 @@
 
   function createUser(userData) {
   	var that = this;
-    var ownerId = userCount,
+    var ownerId = userData.ownerId,
         noteData = userData.notes,
         notesModel = createNotesModel(ownerId, noteData),
         effectsData = userData.effects,
@@ -104,10 +104,6 @@
         ypos = getYPos(rowIndex);
 
     userCount++;
-
-    // Keep these so that we can update them later
-    userModel.effectsModel = effectsModel;
-    userModel.notesModel = notesModel;
 
     createUserView(userModel, ypos);
 
@@ -127,8 +123,6 @@
     // ae is the audio engine instance
     ae.addSequence(SAMPLES[rowIndex], noteData);
     ae.addEffectsData(SAMPLES[rowIndex], effectsData);
-
-    return userModel;
   }
 
 
@@ -148,43 +142,42 @@
   function main() {
     window.paper = Raphael('canvas', CANVAS_WIDTH, 600);
 
-    var users = {},
-        network = new Network();
+    var users = {};
 
+    var network = new Network();
     network.on("userupdate", function(userData) {
-      var userid = userData.userid;
-      var model = users[userid];
-
-      if(model) {
-        console.log("updating user");
-        // update model
-        model.updateFromData(userData);
+      var model = users[userData.userid];
+      if(!model) {
+        createUser(userData);
+        console.log('creating user');
+        users[userData.userid] = 1;
       }
       else {
-        console.log('creating user');
-        model = createUser(userData);
-        users[userid] = model;
+        console.log("updating user");
+        // update model
       }
     });
 
     var userNotes = [];
     var effectsData = [];
 
-    // this is global... FIXME
+	// this is global... FIXME
     userData = {
       ownerId: 0,
-      name: 'Enter your name',
+      name: 'Jeremy',
       mute: false,
       solo: true,
       notes: userNotes,
       effects: effectsData
     };
-    createUser(userData);
+    createUser(userData );
 
     createEditableEffectsBox(effectsData);
 
 	var headphones = paper.image("headphones.png", CANVAS_WIDTH/2-300/2, 0, 300, 300);
-	
+	setTimeout(function() {
+		headphones.animate({opacity: 0.0}, 3000, ">");
+	}, 1000);
   }
 
   $(main);
