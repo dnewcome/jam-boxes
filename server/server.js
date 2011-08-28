@@ -10,16 +10,28 @@ var express = require('express'),
 
 var jams = {};
 
-sio.sockets.on('connection', function( client ) {
-    client.on('broadcast', function( data ) {
-      console.log( 'socket.io broadcast ' + data );
-      client.broadcast.to( data.jam ).emit( 'broadcast', data );
+sio.sockets.on('connection', function( socket ) {
+    var userid;
+    socket.on('broadcast', function( data ) {
+      //console.log( 'socket.io broadcast ' + data );
+      data.userid = userid;
+      socket.broadcast.to( data.roomid ).emit( 'userupdate', data );
     });
 
-    client.on( 'join', function( data ) {
-        client.join( data );
-        jams.data = data;
-        console.log( 'client joining  ' + data );
+    socket.on( 'join', function(data) {
+        var roomid = data.roomid;
+
+        var jam = jams[roomid] = jams[roomid] || {
+          name: 'Unmamed Jam',
+          userCount: 0
+        };
+
+        userid = jam.userCount;
+        jam.userCount++;
+
+        socket.join( roomid );
+        console.log( 'jam joining  ' + jam );
+        console.log( 'socket joining  ' + data );
     });
 });
 

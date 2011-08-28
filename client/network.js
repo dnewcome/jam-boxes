@@ -1,21 +1,26 @@
 /*globals io: true */
 var Network = (function() {
   var Network = function() {
+    var roomid = 'pimpin';
     var socket = io.connect();
-    socket.on('news', function (data) {
-      console.log(data);
-      socket.emit('my other event', { my: 'data' });
+
+    socket.emit('join', { roomid: roomid });
+
+    var me=this;
+    socket.on('userupdate', function(data) {
+      console.log('received a userupdate: ' + data.name);
+      me.emit("userupdate", data);
     });
 
-    socket.emit('join');
-
 	  function broadcast() {
-		console.log('broadcasting user data');
-		console.log( userData );
-		socket.emit('broadcast', userData );
+      console.log('broadcasting user data: ' + userData.name);
+      userData.roomid = roomid;
+      socket.emit('broadcast', userData );
 	  }
-	  setInterval( broadcast, 1000 );
+	  setInterval( broadcast, 10000 );
   }
+
+  Network.prototype = new EventEmitter();
 
   return Network;
 }());

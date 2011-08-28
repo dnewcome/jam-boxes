@@ -12,6 +12,8 @@
       UNITS_PER_NOTE = 8,
       LEFT_MARGIN = (CANVAS_WIDTH - (MEASURES * (BOX_OUTER_WIDTH + MEASURE_MARGIN))) / 2;
 
+  var userCount = 0;
+
   function createNotesModel(ownerId, noteData) {
     var noteModelConfig = {
       ownerId: ownerId,
@@ -90,7 +92,7 @@
     return LEFT_MARGIN + colIndex * (BOX_OUTER_WIDTH + MEASURE_MARGIN);
   }
 
-  function createUser(rowIndex, userData) {
+  function createUser(userData) {
   	var that = this;
     var ownerId = userData.ownerId,
         noteData = userData.notes,
@@ -98,8 +100,10 @@
         effectsData = userData.effects,
         effectsModel = createEffectsModel(ownerId, effectsData),
         userModel = createUserModel(ownerId, userData),
-        ypos = getYPos(rowIndex),
-        network = new Network();
+        rowIndex = userCount,
+        ypos = getYPos(rowIndex);
+
+    userCount++;
 
     createUserView(userModel, ypos);
 
@@ -138,6 +142,22 @@
   function main() {
     window.paper = Raphael('canvas', CANVAS_WIDTH, 600);
 
+    var users = {};
+
+    var network = new Network();
+    network.on("userupdate", function(userData) {
+      var model = users[userData.userid];
+      if(!model) {
+        createUser(userData);
+        console.log('creating user');
+        users[userData.userid] = 1;
+      }
+      else {
+        console.log("updating user");
+        // update model
+      }
+    });
+
     var userNotes = [];
     var effectsData = [];
 
@@ -150,24 +170,9 @@
       notes: userNotes,
       effects: effectsData
     };
-    createUser(0, userData );
+    createUser(userData );
 
     createEditableEffectsBox(effectsData);
-
-    var fakeNoteData = [], i;
-    for (i = 0; i < TOTAL_BEATS; ++i) {
-      fakeNoteData[i] = ~~(Math.random() * 10);
-    }
-
-    var secondEffectsData = [];
-    createUser(1, {
-      ownerId: 1,
-      name: 'Dan',
-      mute: false,
-      solo: false,
-      notes: fakeNoteData,
-      effects: secondEffectsData
-    });
 
   }
 
