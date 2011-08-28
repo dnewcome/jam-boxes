@@ -108,8 +108,10 @@ AudioEngine.prototype.audioWriter = function() {
 
 			// cheap low pass filter from audiolib.
 			// TODO: the effects data is not initialized yet
-			var cutoff = this.effectsData[i][this.tick % 256][1] * 5000;
-			var flt = new audioLib.LowPassFilter(44100, cutoff, 0.8);
+      var set = this.effectsData[i][this.tick % 256];
+			var cutoff = set[1] * 5000;
+      var resonance = set[0];
+			var flt = new audioLib.LowPassFilter(44100, cutoff, resonance);
 			for( var j=1; j < buffer.length; j++ ) {
 				flt.pushSample( buffer[j] );
 				buffer[j] = flt.getMix();
