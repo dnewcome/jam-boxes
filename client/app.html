@@ -14,6 +14,7 @@
       background-image: url('logo.png');
       width: 290px;
       height: 83px;
+      float: left;
     }
 
     #container {
@@ -73,12 +74,25 @@
 	.soloInactive {
 		background-image: url('solo_inactive.png');
 	}
+
+	.twitter-share-button {
+		float: left;
+		margin-top: 20px;
+		margin-left: 100px;
+	}
+
+	#fb-root {
+		float: left;
+		margin-top: 20px;
+	}
   </style>
 </head>
 <body>
   <div id="container">
     <header>
       <div id="logo"></div>
+    	  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://witty-team-name.nko2.nodeknockout.com" data-text="Check out Jam Boxes, a real-time music collaboration web app written for #nodeknockout!" data-count="horizontal" data-via="jamboxes">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+	      <div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="http://witty-team-name.nko2.nodeknockout.com" send="true" layout="box_count" width="450" show_faces="true" font=""></fb:like>
     </header>
     <div id="canvas"></div>
 
