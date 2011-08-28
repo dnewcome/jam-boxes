@@ -15,18 +15,22 @@ var Model = (function() {
     constructor: Model,
 
     init: function(config) {
-      this.values = {}; 
+      this.values = {};
 
       $.extend(this, config);
     },
 
 	tick: function() {
-		this.currentIndex = this.currentIndex+1;
-		if (this.currentIndex >= this.numValues) {
-			this.currentIndex = 0;
-		}
+    var me=this,
+        oldIndex = me.currentIndex;
 
-		this.emit('update', this.currentIndex, this.values[this.currentIndex]);
+		me.currentIndex = me.currentIndex++;
+    me.currentIndex = me.currentIndex % me.numValues;
+
+    if(oldIndex >= 0) {
+      me.emit('tickremove', oldIndex, me.values[oldIndex], me.currentIndex);
+    }
+		me.emit('tickupdate', me.currentIndex, me.values[me.currentIndex]);
 	},
 
     // val: value to be set
