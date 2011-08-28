@@ -186,7 +186,9 @@ function EffectsBox(x, y, width, height, ind, data) {
 			that.effectsPoint.attr({x: newX, y: newY});
 		}
 		else {
-			that.mainBox.attr({fill: that.mainBoxAttr.fill});
+			if (that.mainBox.attrs.fill != that.mainBoxAttr.fill) {
+				that.mainBox.attr({fill: that.mainBoxAttr.fill});
+			}
 		}
 	});
 
