@@ -74,7 +74,7 @@
   function createUserView(userModel, ypos) {
     var view = new UserView({
       data: userModel,
-      ypos: (ypos + BOX_OUTER_HEIGHT - 10) + 'px'
+      ypos: (ypos + 20) + 'px'
     });
   }
 

@@ -178,7 +178,8 @@ function EffectsBox(x, y, width, height, ind, data) {
 
 	data.on('update', function(ind, val) {
 		if (that.data.boxForIndex(ind) == that.ind) {
-			if (that.mainBox.attrs.fill != that.mainBoxAttrHighlight.fill) {
+			if (that.mainBox.fill != that.mainBoxAttrHighlight.fill) {
+        that.mainBox.fill = that.mainBoxAttrHighlight.fill;
 				that.mainBox.attr({fill: that.mainBoxAttrHighlight.fill});
 			}
 			var newX = that.xpos + val[0]*(that.width-16) + 5;
@@ -188,7 +189,8 @@ function EffectsBox(x, y, width, height, ind, data) {
 			}
 		}
 		else {
-			if (that.mainBox.attrs.fill != that.mainBoxAttr.fill) {
+			if (that.mainBox.fill != that.mainBoxAttr.fill) {
+        that.mainBox.fill = that.mainBoxAttr.fill;
 				that.mainBox.attr({fill: that.mainBoxAttr.fill});
 			}
 		}
