@@ -186,10 +186,10 @@ var NotesBox = (function() {
           me.outer.attr({fill: OUTER_COLOR});
         }
 
-        if ("undefined" !== typeof value) {
+        if ("undefined" !== typeof value && value !== null) {
           var note = columnBoxes[value];
 
-          if (note.fill != SELECTED_COLOR) {
+          if (note && (note.fill != SELECTED_COLOR)) {
             note.fill = SELECTED_COLOR;
             note.attr({fill: SELECTED_COLOR});
           }
@@ -212,7 +212,7 @@ var NotesBox = (function() {
           me.outer.attr({fill: OUTER_COLOR_HIGHLIGHT});
         }
 
-        if ("undefined" !== typeof value) {
+        if ("undefined" !== typeof value && value !== null) {
           var note = columnBoxes[value];
 
           if (note.fill != SELECTED_COLOR_HIGHLIGHT) {

@@ -33,8 +33,6 @@ sio.sockets.on('connection', function( socket ) {
         jam.userCount++;
 
         socket.join( roomid );
-        console.log( 'jam joining  ' + jam );
-        console.log( 'socket joining  ' + data );
     });
 });
 
