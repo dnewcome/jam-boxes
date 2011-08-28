@@ -94,7 +94,7 @@
 
   function createUser(userData) {
   	var that = this;
-    var ownerId = userData.ownerId,
+    var ownerId = userCount,
         noteData = userData.notes,
         notesModel = createNotesModel(ownerId, noteData),
         effectsData = userData.effects,
@@ -104,6 +104,10 @@
         ypos = getYPos(rowIndex);
 
     userCount++;
+
+    // Keep these so that we can update them later
+    userModel.effectsModel = effectsModel;
+    userModel.notesModel = notesModel;
 
     createUserView(userModel, ypos);
 
@@ -123,6 +127,8 @@
     // ae is the audio engine instance
     ae.addSequence(SAMPLES[rowIndex], noteData);
     ae.addEffectsData(SAMPLES[rowIndex], effectsData);
+
+    return userModel;
   }
 
 
@@ -142,35 +148,38 @@
   function main() {
     window.paper = Raphael('canvas', CANVAS_WIDTH, 600);
 
-    var users = {};
+    var users = {},
+        network = new Network();
 
-    var network = new Network();
     network.on("userupdate", function(userData) {
-      var model = users[userData.userid];
-      if(!model) {
-        createUser(userData);
-        console.log('creating user');
-        users[userData.userid] = 1;
-      }
-      else {
+      var userid = userData.userid;
+      var model = users[userid];
+
+      if(model) {
         console.log("updating user");
         // update model
+        model.updateFromData(userData);
+      }
+      else {
+        console.log('creating user');
+        model = createUser(userData);
+        users[userid] = model;
       }
     });
 
     var userNotes = [];
     var effectsData = [];
 
-	// this is global... FIXME
+    // this is global... FIXME
     userData = {
       ownerId: 0,
-      name: 'Jeremy',
+      name: 'Enter your name',
       mute: false,
       solo: true,
       notes: userNotes,
       effects: effectsData
     };
-    createUser(userData );
+    createUser(userData);
 
     createEditableEffectsBox(effectsData);
 
