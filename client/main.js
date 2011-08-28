@@ -212,10 +212,30 @@ if (!Function.prototype.bind) {
     users.local = model;
 
   if(!model.getVal("returning")) {
-    var headphones = paper.image("headphones.png", CANVAS_WIDTH/2-300/2, 0, 300, 300);
+
+    $('#lightbox').show();
+    $('#headphones').show();
+
     setTimeout(function() {
-      headphones.animate({opacity: 0.0}, 3000, "<", function() {
-        this.remove();
+      $('#headphones').fadeOut(1000, function() {
+
+        $('#instructions').show();
+
+        function removeInstructions() {
+          $('#instructions').fadeOut(1000, function() {
+            $('#instructions01').show();
+          });
+          $('body').bind('click', removeInstructions2);
+        }
+
+
+        function removeInstructions2() {
+          $('#instructions01').fadeOut(1000, function() {
+            $('#lightbox').hide();
+          });
+        }
+
+        $('body').bind('click', removeInstructions);
       });
     }, 1000);
   }
@@ -250,9 +270,14 @@ if (!Function.prototype.bind) {
   }
 
 
-  if(!$.browser.mozilla) {
+  if($.browser.ie && parseInt($.browser.version, 10) < 10) {
+    $('#ieSupport').show();
+    return;
+  }
+  else if(!$.browser.mozilla) {
     $('#noSupport').show();
   }
+
   $(main);
 
 }());

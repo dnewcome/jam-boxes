@@ -10,6 +10,10 @@
       background-color: #000000;
     }
 
+    header {
+      display: block;
+    }
+
     #logo {
       background-image: url('logo.png');
       width: 290px;
@@ -52,14 +56,15 @@
 		background-color: red;
 	}
 
-  #noSupport {
+  #noSupport, #ieSupport {
+    clear: both;
     display: none;
     color: #DC3A92;
     margin: 50px auto;
     text-align: center;
   }
 
-  #noSupport a {
+  #noSupport a, #ieSupport a {
     color: #638091;
   }
 
@@ -96,6 +101,24 @@
 		float: left;
 		margin-top: 20px;
 	}
+
+  #lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .75);
+  }
+
+  #lightbox > img {
+    display: none;
+    margin: 0 auto;
+    display: block;
+    margin-top: 50px;
+    cursor: pointer;
+  }
   </style>
 </head>
 <body>
@@ -106,6 +129,15 @@
 	      <div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="http://witty-team-name.nko2.nodeknockout.com" send="true" layout="box_count" width="450" show_faces="true" font=""></fb:like>
     </header>
 
+    <div id="ieSupport">
+        <strong>We are very sorry, because we are using experimental <a
+        href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html">Audio
+        API</a> features as well as SVG, we cannot support IE &lt; 10 at this time.
+
+        Try <a href="http://www.mozilla.org/en-US/firefox/fx/?from=getfirefox">Firefox
+        4 and greater</a> for audio and video or another HTML5 compatible
+        browser.</strong>
+        </div>
     <div id="noSupport">
         <strong>We are very sorry, because we are using experimental <a
         href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html">Audio
@@ -116,11 +148,19 @@
         awesome graphics for now, and trust us when we say it is fun with
         sound.</strong>
     </div>
+
     <div id="canvas"></div>
 
     <footer>
     </footer>
   </div>
+
+  <div id="lightbox">
+    <img id="headphones" src="headphones.png" />
+    <img id="instructions" src="instructions.png" />
+    <img id="instructions01" src="instructions01.png" />
+  </div>
+
   <script type="text/javascript" src="lib/jquery-1.6.2.min.js"></script>
   <script type="text/javascript" src="lib/jquery.jeditable.min.js"></script>
   <script type="text/javascript" src="lib/raphael-min.js"></script>

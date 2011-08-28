@@ -106,6 +106,9 @@ EffectsData.prototype.tick = function(tick) {
       EffectsData.currentIndex = 0;
     }
   }
+  else {
+  	console.log('same');
+  }
 
 	if (typeof this.overrideProvider !== 'undefined') {
 		this.values[EffectsData.currentIndex] = this.overrideProvider.getOverrideValue();
