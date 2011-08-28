@@ -10,7 +10,7 @@ var UserModel = (function() {
     constructor: UserModel,
     init: function(config) {
       var me=this;
-      if(!config.values.ownerId) {
+      if(0 === config.values.ownerId) {
         me.on("update:name", me.onLocalUserNameChange.bind(me));
 
         var values = config.values;

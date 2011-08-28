@@ -33,7 +33,13 @@ var Network = (function() {
     });
 
 	  function broadcast() {
-      socket.emit('broadcast', userData);
+      var bcastData = {
+        name: userData.name,
+        notes: userData.notes,
+        effects: userData.effects,
+        userid: userData.userid
+      }
+      socket.emit('broadcast', bcastData);
 	  }
 	  setInterval( broadcast, 10000 );
   }
