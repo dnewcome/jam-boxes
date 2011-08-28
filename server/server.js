@@ -1,6 +1,7 @@
 var express = require('express');
 var http = require('http');
 var io = require('socket.io');
+var nko = require('nko')('wRA8t4RHBIt43pAw');
 
 var app = express.createServer()
   , io = io.listen(app);
