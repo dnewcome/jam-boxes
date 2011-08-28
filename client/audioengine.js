@@ -99,11 +99,20 @@ AudioEngine.prototype.audioWriter = function() {
 	for( var i in this.samplers ) {
 		var s = this.samplers[i];
 		if ( s.envelope.isActive() ) {
-		  s.generate();
-		  this.mix( s.applyEnvelope(), additiveSignal );
+			s.generate();
+			var buffer = s.applyEnvelope();
+
+			// cheap low pass filter from audiolib.
+			var flt = new audioLib.LowPassFilter(44100, 2000, 1.0);
+			for( var j=1; j < buffer.length; j++ ) {
+				flt.pushSample( buffer[j] );
+				buffer[j] = flt.getMix();
+			}
+
+			this.mix( buffer, additiveSignal );
 		}
 	}
-  
+
 	this.output.mozWriteAudio(additiveSignal);
 
 	this.tick++;
