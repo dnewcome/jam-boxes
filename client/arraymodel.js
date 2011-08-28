@@ -8,6 +8,10 @@ var ArrayModel = (function() {
     this.init(config);
   };
 
+  var prevTick = null;
+  var currentIndex = -1;
+  var oldIndex = -1;
+
   ArrayModel.prototype = new EventEmitter();
   $.extend(ArrayModel.prototype, {
     constructor: ArrayModel,
@@ -15,29 +19,27 @@ var ArrayModel = (function() {
     init: function(config) {
       var me = this;
       me.values = [];
-      me.currentTick = -1;
-      me.currentIndex = -1;
 
       $.extend(me, config);
 
       ae.on('tick', me.tick.bind(me));
     },
 
-    tick: function() {
+    tick: function(tick) {
       var me=this;
-      me.currentTick++;
-      me.currentTick = me.currentTick % me.totalTicks;
+      if ((tick % me.numUnits) === 0) {
 
-      if ((me.currentTick % me.numUnits) === 0) {
-        var oldIndex = me.currentIndex;
-
-        me.currentIndex++;
-        me.currentIndex = me.currentIndex % me.numValues;
+        if(prevTick !== tick) {
+          oldIndex = currentIndex;
+          prevTick = tick;
+          currentIndex++;
+          currentIndex = currentIndex % me.numValues;
+        }
 
         if(oldIndex >= 0) {
-          me.emit('tickremove', oldIndex, me.values[oldIndex], me.currentIndex);
+          me.emit('tickremove', oldIndex, me.values[oldIndex], currentIndex);
         }
-        me.emit('tickupdate', me.currentIndex, me.values[me.currentIndex]);
+        me.emit('tickupdate', currentIndex, me.values[currentIndex]);
       }
     },
 

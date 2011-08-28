@@ -23,7 +23,6 @@ function EffectsData(effectsData, ownerId, measures, notesPerMeasure, audioEngin
 	this.values = effectsData;	// each value is of the form [x, y], where x and y are between 0-1 inclusive
 
 	this.numValues = this.unitsPerNote*this.notesPerBox*this.numBoxes;
-	this.currentIndex = -1;	// this should be between 0 and (this.numValues-1) inclusive
 
 	this.audioEngine = audioEngine;
 
@@ -81,8 +80,8 @@ function EffectsData(effectsData, ownerId, measures, notesPerMeasure, audioEngin
 
 	this.copy = function(ind, values) {
 		var shouldUpdate = false;
-		if (that.currentIndex <= ind*that.unitsPerNote*that.notesPerBox &&
-			that.currentIndex >= (ind+1)*that.unitsPerNote*that.notesPerBox) {
+		if (EffectsData.currentIndex <= ind*that.unitsPerNote*that.notesPerBox &&
+			EffectsData.currentIndex >= (ind+1)*that.unitsPerNote*that.notesPerBox) {
 			shouldUpdate = true;
 		}
 		for (var i=0; i<values.length; i++) {
@@ -95,19 +94,26 @@ function EffectsData(effectsData, ownerId, measures, notesPerMeasure, audioEngin
 
 EffectsData.prototype = new EventEmitter();
 
-EffectsData.prototype.tick = function() {
-	this.currentIndex = this.currentIndex+1;
-	if (this.currentIndex >= this.numValues) {
-		this.currentIndex = 0;
-	}
+EffectsData.currentIndex = -1;	// this should be between 0 and (this.numValues-1) inclusive
+EffectsData.lastTick = null;
+
+EffectsData.prototype.tick = function(tick) {
+  if(EffectsData.lastTick !== tick) {
+    EffectsData.lastTick = tick;
+
+    EffectsData.currentIndex = EffectsData.currentIndex+1;
+    if (EffectsData.currentIndex >= this.numValues) {
+      EffectsData.currentIndex = 0;
+    }
+  }
 
 	if (typeof this.overrideProvider !== 'undefined') {
-		this.values[this.currentIndex] = this.overrideProvider.getOverrideValue();
+		this.values[EffectsData.currentIndex] = this.overrideProvider.getOverrideValue();
 	}
 
-	//console.log("effects: " + this.currentIndex);
+	//console.log("effects: " + EffectsData.currentIndex);
 
-	this.emit('update', this.currentIndex, this.values[this.currentIndex]);
+	this.emit('update', EffectsData.currentIndex, this.values[EffectsData.currentIndex]);
 }
 
 // val: value to be set
@@ -116,7 +122,7 @@ EffectsData.prototype.tick = function() {
 EffectsData.prototype.setVal = function(ind, val, shouldUpdate) {
 	this.values[ind] = val;
 	if (shouldUpdate == true) {
-		this.emit('update', this.currentIndex, this.values[this.currentIndex]);
+		this.emit('update', EffectsData.currentIndex, this.values[EffectsData.currentIndex]);
 	}
 };
 
