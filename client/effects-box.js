@@ -228,6 +228,9 @@ function EffectsController(x, y, width, height, data) {
 
 	if (this.data.ownerId === 0) {
 		eventBox.mousedown(function(event) {
+			if(event.preventDefault) {
+				event.preventDefault();
+			}
 			that.isMouseDown = true;
 			var xVal = (event.layerX-that.xpos)/that.width;
 			var yVal = (event.layerY-that.ypos)/that.height;
@@ -269,6 +272,8 @@ function EffectsController(x, y, width, height, data) {
 				that.data.setValOverride(that);
 			}
 		});
+
+		eventBox.drag(function() {}, function() {}, function() {});
 	}
 
 	this.shapes.push(this.mainBox, this.effectsPoint, eventBox);
