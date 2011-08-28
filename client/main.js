@@ -180,6 +180,13 @@
     };
     createUser(userData);
     createEditableEffectsBox(effectsData);
+
+	var headphones = paper.image("headphones.png", CANVAS_WIDTH/2-300/2, 0, 300, 300);
+	setTimeout(function() {
+		headphones.animate({opacity: 0.0}, 3000, "<", function() {
+			this.remove();
+		});
+	}, 1000);
   }
 
   $(main);
