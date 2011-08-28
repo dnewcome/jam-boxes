@@ -164,6 +164,12 @@ function EffectsBox(x, y, width, height, ind, data) {
 	var eventBox = paper.rect(this.xpos, this.ypos, this.width, this.height);
 	eventBox.attr({fill: '#000000', 'fill-opacity': 0.01, stroke: 'none'});
 
+	eventBox.mousedown(function(event) {
+		if(event.preventDefault) {
+			event.preventDefault();
+		}
+	});
+
 	eventBox.drag(	effectsBoxDNDManager.dragMove.bind(effectsBoxDNDManager, this),
 					effectsBoxDNDManager.dragStart.bind(effectsBoxDNDManager, this),
 					effectsBoxDNDManager.dragUp.bind(effectsBoxDNDManager, this));
@@ -235,7 +241,6 @@ function EffectsController(x, y, width, height, data) {
 			var xVal = (event.layerX-that.xpos)/that.width;
 			var yVal = (event.layerY-that.ypos)/that.height;
 			that.overrideValue = [xVal, yVal];
-	
 			that.data.setValOverride(that);
 		});
 
@@ -262,7 +267,7 @@ function EffectsController(x, y, width, height, data) {
 				that.wasInEventBox = true;
 			}
 		});
-	
+
 		eventBox.mouseover(function(event) {
 			if (that.wasInEventBox === true && that.isMouseDown === true) {
 				that.wasInEventBox = false;

@@ -23,6 +23,12 @@ var Shape = (function() {
 
       me.shapes.push(el);
 
+	  el.mousedown(function(event) {
+		if(event.preventDefault) {
+			event.preventDefault();
+		}
+	  });
+
       el.drag(function(dx, dy) {
         me.dndManager.dragMove(me, dx, dy);
       }, function(dx, dy) {
