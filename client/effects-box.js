@@ -123,7 +123,6 @@ EffectsData.prototype.setValOverride = function(overrideProvider) {
 }
 
 EffectsData.prototype.getVal = function(ind) {
-	this.playIndex(ind);
 	return this.values[ind];
 };
 

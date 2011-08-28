@@ -19,6 +19,10 @@ function AudioEngine() {
 	this.tick = 0;
 	this.numSamplesWritten = 0;
 	this.prebufferSize = this.sampleRate/2;
+
+//	this.overrideProvider = undefined;
+
+	this.tickDelay = 32;
 }
 
 AudioEngine.prototype = new EventEmitter();
@@ -26,7 +30,7 @@ AudioEngine.prototype = new EventEmitter();
 AudioEngine.prototype.start = function() {
 	var me = this;
 	this.interval = setInterval( function() {
-		me.audioWriter();
+		me.updateAudio();
 	}, this.bufferTime );
 }
 AudioEngine.prototype.stop = function() {
@@ -78,8 +82,17 @@ AudioEngine.prototype.addEffectsData = function( name, cc ) {
 	this.effectsData[name] = cc;
 }
 
-AudioEngine.prototype.audioWriter = function() {
-	this.emit( 'tick', this.tick );
+AudioEngine.prototype.updateAudio = function() {
+	var tick = this.tick - this.tickDelay;
+	if (tick >=0) {
+		this.emit('tick', tick);
+	}
+
+	this.writeAudio();
+	this.tick++;
+}
+
+AudioEngine.prototype.writeAudio = function() {
 	// start out with empty buffer
 	var outBuffer = new Float32Array(this.bufferSize);
 	for (var i=0; i<this.bufferSize; i++) {
@@ -89,49 +102,54 @@ AudioEngine.prototype.audioWriter = function() {
 	// take a look at tick position to find out if we need to
 	// trigger any generators
 
-	if( this.tick % 8 == 0 ) {
-		for( var seq in this.sequences ) {
-			var sequence = this.sequences[ seq ];
-			if( sequence[ this.tick % 256 / 8 ] != null ) {
-
-				// retrigger
-				this.samplers[seq].envelope.noteOff();
-				this.samplers[seq].reset();
-				this.trigger(
-					this.samplers[ seq ],
-					AudioEngine.midiNoteFreq[sequence[ this.tick % 256 / 8 ] ] + 12
-				);
+	//var tick = this.tick - this.tickDelay;
+	var tick = this.tick;
+	if (tick >= 0) {
+		if( tick % 8 == 0 ) {
+			for( var seq in this.sequences ) {
+				var sequence = this.sequences[ seq ];
+				if( sequence[ tick % 256 / 8 ] != null ) {
+	
+					// retrigger
+					this.samplers[seq].envelope.noteOff();
+					this.samplers[seq].reset();
+					console.log("write audio note: " + sequence[ tick % 256 / 8 ]);
+					this.trigger(
+						this.samplers[ seq ],
+						AudioEngine.midiNoteFreq[sequence[ tick % 256 / 8 ] ] + 12
+					);
+				}
 			}
 		}
-	}
 
-	// generate the sample data for any playing generators
-	for( var key in this.samplers ) {
-		var sampler = this.samplers[key];
-		if ( sampler.envelope.isActive() ) {
-			sampler.generate();
-			var buffer = sampler.applyEnvelope();
-
-			var effectsData = this.effectsData[key][this.tick % 256];
-			var val1 = effectsData[0];
-			var val2 = effectsData[1];
-
-			var cutoff = val2 * 5000;
-	      	var resonance = val1;
-			var lowpassFilter = this.lowpassFilters[key];
-			lowpassFilter.cutoff = cutoff;
-			lowpassFilter.resonance = resonance;
-
-			for( var j=1; j < buffer.length; j++ ) {
-				buffer[j] = lowpassFilter.pushSample( buffer[j] );
+		// generate the sample data for any playing generators
+		for( var key in this.samplers ) {
+			var sampler = this.samplers[key];
+			if ( sampler.envelope.isActive() ) {
+				sampler.generate();
+				var buffer = sampler.applyEnvelope();
+	
+				var effectsData = this.effectsData[key][tick % 256];
+				var val1 = effectsData[0];
+				var val2 = effectsData[1];
+	
+				var cutoff = val2 * 5000;
+		      	var resonance = val1;
+				var lowpassFilter = this.lowpassFilters[key];
+				lowpassFilter.cutoff = cutoff;
+				lowpassFilter.resonance = resonance;
+	
+				for( var j=1; j < buffer.length; j++ ) {
+					buffer[j] = lowpassFilter.pushSample( buffer[j] );
+				}
+	
+				outBuffer = DSP.mixSampleBuffers(buffer, outBuffer, false, Object.keys(this.samplers).length);
 			}
-
-			outBuffer = DSP.mixSampleBuffers(buffer, outBuffer, false, Object.keys(this.samplers).length);
 		}
 	}
 
 	// flush the buffer
-    this.output.mozWriteAudio([]);
+//    this.output.mozWriteAudio([]);
 
 	var numSamplesLeft = outBuffer.length;
 	while (numSamplesLeft > 0) {
@@ -141,14 +159,12 @@ AudioEngine.prototype.audioWriter = function() {
 		outBuffer = outBuffer.subarray(numSamplesWritten);
 	}
 
-	this.tick++;
-
 	var currentPosition = this.output.mozCurrentSampleOffset();
 
 	var available = currentPosition + this.prebufferSize - this.numSamplesWritten;
 
 	if (available > 0) {
-		this.audioWriter();
+		this.writeAudio();
 	}
 };
 
