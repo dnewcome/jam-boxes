@@ -223,11 +223,13 @@ AudioEngine.prototype.addEffectsData = function( name, cc ) {
 
 AudioEngine.prototype.updateAudio = function() {
 	var tick = this.tick - this.tickDelay;
+
 	if (tick >=0) {
 		this.emit('tick', tick);
 	}
 
 	this.writeAudio();
+
 	this.tick++;
 }
 
@@ -327,6 +329,13 @@ AudioEngine.prototype.writeAudio = function() {
     } catch(e) {
       // will error on non supporting browsers
     }
+
+/*	if (this.autoLatency) {
+		this.prebufferSize = Math.floor(44100 * (new Date().valueOf() - this.started) / 1000);
+		if (currentPosition) { // Play position moved?
+			this.autoLatency = false;
+		}
+	}*/
 
 	var available = currentPosition + this.prebufferSize - this.numSamplesWritten;
 
