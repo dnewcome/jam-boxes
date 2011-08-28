@@ -25,6 +25,8 @@ function EffectsData(effectsData, ownerId, measures, notesPerMeasure, audioEngin
 	this.numValues = this.unitsPerNote*this.notesPerBox*this.numBoxes;
 	this.currentIndex = -1;	// this should be between 0 and (this.numValues-1) inclusive
 
+	this.audioEngine = audioEngine;
+
   if(!this.values.length) {
     for (var i=0; i<this.numValues; i++) {
       this.values[i] = [0.5, 0.5];
@@ -120,6 +122,7 @@ EffectsData.prototype.setVal = function(ind, val, shouldUpdate) {
 
 EffectsData.prototype.setValOverride = function(overrideProvider) {
 	this.overrideProvider = overrideProvider;
+	this.audioEngine.overrideProvider = overrideProvider;
 }
 
 EffectsData.prototype.getVal = function(ind) {

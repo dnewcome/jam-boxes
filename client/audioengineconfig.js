@@ -5,6 +5,9 @@ var SAMPLES = [
   'guitar'
 //  'snare'
 ];
+
+ae.overrideProviderKey = SAMPLES[0];	// this should be the SAMPLE name for the local user
+
 // TODO: we are hard coding the instruments here
 ae.createSampler( 'guitar', '../audio/guitar.wav' );
 //ae.createSampler( 'snare', '../audio/sn.wav' );

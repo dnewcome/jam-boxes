@@ -20,7 +20,8 @@ function AudioEngine() {
 	this.numSamplesWritten = 0;
 	this.prebufferSize = this.sampleRate/2;
 
-//	this.overrideProvider = undefined;
+	this.overrideProvider = undefined;
+	this.overrideProviderKey = undefined;
 
 	this.tickDelay = 32;
 }
@@ -128,8 +129,14 @@ AudioEngine.prototype.writeAudio = function() {
 			if ( sampler.envelope.isActive() ) {
 				sampler.generate();
 				var buffer = sampler.applyEnvelope();
-	
-				var effectsData = this.effectsData[key][tick % 256];
+
+				var effectsData;
+				if (key == this.overrideProviderKey && typeof this.overrideProvider !== 'undefined') {
+					effectsData = this.overrideProvider.getOverrideValue();
+				}
+				else {
+					effectsData = this.effectsData[key][tick % 256];
+				}
 				var val1 = effectsData[0];
 				var val2 = effectsData[1];
 	
