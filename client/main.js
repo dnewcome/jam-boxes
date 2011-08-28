@@ -226,5 +226,10 @@
 
   }
 
+
+  if(!$.browser.mozilla) {
+    $('#noSupport').show();
+  }
   $(main);
+
 }());
