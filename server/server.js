@@ -189,6 +189,9 @@ app.configure(function() {
 app.get('/', function(req, res){
     res.redirect( '/app.html' );
 });
+app.get('/index.html', function(req, res){
+    res.redirect( '/app.html' );
+});
 
 // app.listen( 3000 );
 app.listen(process.env.NODE_ENV === 'production' ? 80 : 8000, function() {
