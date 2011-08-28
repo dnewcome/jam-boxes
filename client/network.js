@@ -8,12 +8,10 @@ var Network = (function() {
 
     var me=this;
     socket.on('userupdate', function(data) {
-      console.log('received a userupdate: ' + data.name);
       me.emit("userupdate", data);
     });
 
 	  function broadcast() {
-      console.log('broadcasting user data: ' + userData.name);
       userData.roomid = roomid;
       socket.emit('broadcast', userData );
 	  }
