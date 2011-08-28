@@ -32,6 +32,24 @@
       left: 10px;
       color: #fff;
     }
+	
+	.tbutton {
+		border-radius: 10px;
+		width: 100px;
+		height: 40px;
+		margin: 15px;
+		margin-left: 25px;
+		position: relative;
+		color: white;
+		font-size: 20px;
+		font-weight: bold;
+	}
+	#startbutton {
+		background-color: green;
+	}
+	#stopbutton {
+		background-color: red;
+	}
   </style>
 </head>
 <body>
@@ -39,8 +57,8 @@
     <header>
       <div id="logo"></div>
     </header>
-	<button onclick="start();">Start</button>
-	<button onclick="stop();">Stop</button>
+	<button id="startbutton" class="tbutton" onclick="start();">Start</button>
+	<button id="stopbutton" class="tbutton" onclick="stop();">Stop</button>
 
     <div id="canvas"></div>
 
