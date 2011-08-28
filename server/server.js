@@ -3,11 +3,10 @@ var express = require('express'),
     io = require('socket.io'),
     MemoryStore = express.session.MemoryStore,
     app = express.createServer(),
-    sio = io.listen(app),
     sessionStore = new MemoryStore(),
     nko = require('nko')('wRA8t4RHBIt43pAw'),
     app = express.createServer(),
-    io = io.listen(app);
+    sio = io.listen(app);
 
 var jams = {};
 
