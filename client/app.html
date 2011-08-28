@@ -50,6 +50,29 @@
 	#stopbutton {
 		background-color: red;
 	}
+
+	.controlButton {
+		width: 47px;
+		height: 44px;
+		cursor: pointer;cursor: hand;
+		float: left;
+	}
+
+	.muteActive {
+		background-image: url('mute_active.png');
+	}
+
+	.muteInactive {
+		background-image: url('mute_inactive.png');
+	}
+
+	.soloActive {
+		background-image: url('solo_active.png');
+	}
+
+	.soloInactive {
+		background-image: url('solo_inactive.png');
+	}
   </style>
 </head>
 <body>
@@ -88,13 +111,9 @@
 
   <script type="text/html" id="userInfoTemplate">
     <div class="user">
-      <div class="username"></div>
-      <p>
-        <label for="mute">Mute:</label><input type="checkbox" name="mute" value="mute" />
-      </p>
-      <p>
-        <label for="solo">Solo:</label><input type="checkbox" name="solo" value="solo" />
-      </p>
+      	<div class="username"></div>
+        <div class="controlButton muteInactive mute"></div>
+        <div class="controlButton soloInactive solo"></div>
     </div>
   </script>
 
