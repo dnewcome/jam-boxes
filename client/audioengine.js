@@ -6,14 +6,18 @@ function AudioEngine() {
 	this.sampleRate = 44100;
 	// tick length is hard coded to 120bpm
 	// ends up being about 62ms
-	this.tick = 120/60/16/8*1000;
-	this.bufferTime = this.tick; 
-	this.bufferSize = Math.floor(this.tick/1000*this.sampleRate);
+	this.tickTime = 120/60/16/8*1000;
+	this.bufferTime = this.tickTime; 
+	this.bufferSize = Math.floor(this.tickTime/1000*this.sampleRate);
 
       // Setup audio channel
 	this.output = new Audio();
 	this.output.mozSetup( 1, this.sampleRate );
+
+	this.tick = 0;
 }
+
+AudioEngine.prototype = new EventEmitter();
 
 AudioEngine.prototype.start = function() {
 	var me = this;
@@ -65,18 +69,18 @@ AudioEngine.prototype.addSequence = function( name, seq ) {
 	this.sequences[name] = seq;
 }
 
-		var tick = 0;
 
 AudioEngine.prototype.audioWriter = function() {
+	this.emit( 'tick', this.tick );	
 	// start out with empty buffer
 	var additiveSignal = new Float32Array(this.bufferSize);
 
 	// take a look at tick position to find out if we need to 
 	// trigger any generators
-	if( tick % 8 == 0 ) {
+	if( this.tick % 8 == 0 ) {
 		for( var seq in this.sequences ) {
 			var sequence = this.sequences[ seq ];
-			if( sequence[ tick % 128 / 8 ] == 1 ) {
+			if( sequence[ this.tick % 128 / 8 ] == 1 ) {
 				this.trigger( this.samplers[ seq ] );
 			}
 		}
@@ -88,13 +92,13 @@ AudioEngine.prototype.audioWriter = function() {
 		var s = this.samplers[i];
 		if ( s.envelope.isActive() ) {
 		  s.generate();
-		  mix( s.applyEnvelope(), additiveSignal );
+		  this.mix( s.applyEnvelope(), additiveSignal );
 		}
 	}
   
 	this.output.mozWriteAudio(additiveSignal);
 
-	tick++;
+	this.tick++;
 };
 
 AudioEngine.prototype.trigger = function( sampler ) {
@@ -108,10 +112,10 @@ AudioEngine.prototype.trigger = function( sampler ) {
   }
 
       
-	// mix buf1 into buf2
-	function mix( buf1, buf2 ) {
-		for( var i=0; i < buf1.length; i++ ) {
-			buf2[i] = ( buf1[i] + buf2[i] ) / 2;
-		}	
-	}
+// mix buf1 into buf2
+AudioEngine.prototype.mix = function( buf1, buf2 ) {
+	for( var i=0; i < buf1.length; i++ ) {
+		buf2[i] = ( buf1[i] + buf2[i] ) / 2;
+	}	
+}
 
