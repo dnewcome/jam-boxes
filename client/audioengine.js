@@ -112,6 +112,9 @@ function AudioEngine() {
 	this.bitCrushers = {};
 	this.distortions = {};
 
+	this.isMute = {};
+	this.isSolo = {};
+
 	this.sampleRate = 44100;
 	// tick length is hard coded to 120bpm
 	// ends up being about 62ms
@@ -135,6 +138,8 @@ function AudioEngine() {
 	this.outputFilter = new IIRFilter(44100, 5000, 0, 0);
 	this.outputCompressor = new Compressor(44100);
 	this.outputCompressor.gain = 1.0;
+
+	
 }
 
 AudioEngine.prototype = new EventEmitter();
@@ -155,6 +160,21 @@ AudioEngine.prototype.addSampler = function( name, sampler ) {
 	this.bitCrushers[name] = new BitCrusher(44100, 12);
 	this.distortions[name] = new Distortion(44100);
 	this.distortions[name].gain = 8;
+	this.isMute[name] = false;
+	this.isSolo[name] = false;
+}
+
+AudioEngine.prototype.registerMuteSoloEmitter = function(emitter) {
+	var that = this;
+	emitter.on("mute", function(ownerId, isMute) {
+		var name = SAMPLES[ownerId];
+		that.isMute[name] = isMute;
+	});
+
+	emitter.on("solo", function(ownerId, isSolo) {
+		var name = SAMPLES[ownerId];
+		that.isSolo[name] = isSolo;
+	});
 }
 
 /**
@@ -238,6 +258,9 @@ AudioEngine.prototype.writeAudio = function() {
 
 		// generate the sample data for any playing generators
 		for( var key in this.samplers ) {
+			if (this.isMute[key]) {
+				continue;
+			}
 			var sampler = this.samplers[key];
 			if ( sampler.envelope.isActive() ) {
 				sampler.generate();

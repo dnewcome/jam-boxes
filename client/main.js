@@ -74,6 +74,7 @@
       values: userData
     });
 
+	ae.registerMuteSoloEmitter(userModel);
     return userModel;
   }
 
