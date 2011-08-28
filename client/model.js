@@ -15,10 +15,19 @@ var Model = (function() {
     constructor: Model,
 
     init: function(config) {
-      this.values = {};
+      this.values = {}; 
 
       $.extend(this, config);
     },
+
+	tick: function() {
+		this.currentIndex = this.currentIndex+1;
+		if (this.currentIndex >= this.numValues) {
+			this.currentIndex = 0;
+		}
+
+		this.emit('update', this.currentIndex, this.values[this.currentIndex]);
+	},
 
     // val: value to be set
     // ind: index of the value to be set
@@ -42,7 +51,5 @@ var Model = (function() {
 
   });
 
-
   return Model;
-
 }());

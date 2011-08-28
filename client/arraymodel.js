@@ -14,9 +14,31 @@ var ArrayModel = (function() {
 
     init: function(config) {
       this.values = [];
+      this.currentTick = -1;
+      this.currentIndex = -1;
 
       $.extend(this, config);
+
+	  var me = this;
+
+	  ae.on('tick', this.tick.bind(this));	  
     },
+
+	tick: function() {
+		this.currentTick = this.currentTick+1;
+	  	if (this.currentTick >= this.totalTicks) {
+	  		this.currentTick = 0;
+	  	}
+
+		if ((this.currentTick % this.numUnits) === 0) {
+			this.currentIndex = this.currentIndex+1;
+			if (this.currentIndex >= this.numValues) {
+				this.currentIndex = 0;
+			}
+			//console.log("notes: " + this.currentIndex);
+			this.emit('update', this.currentIndex, this.values[this.currentIndex]);
+		}
+	},
 
     // updates the UI. the UI element is responsible for determining
     // whether or not the current index should update the UI (i.e.

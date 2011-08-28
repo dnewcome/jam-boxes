@@ -9,13 +9,17 @@
       BOX_OUTER_HEIGHT = 60,
       BOX_INNER_WIDTH = 48,
       BOX_INNER_HEIGHT = 48,
+      UNITS_PER_NOTE = 8,
       LEFT_MARGIN = (CANVAS_WIDTH - (MEASURES * (BOX_OUTER_WIDTH + MEASURE_MARGIN))) / 2;
 
   function createNotesModel(ownerId, noteData) {
     var noteModelConfig = {
       ownerId: ownerId,
       copySize: NOTES_PER_MEASURE,
-      timer: ae
+      timer: ae,
+      numValues: NOTES_PER_MEASURE*MEASURES,
+      numUnits: UNITS_PER_NOTE,
+      totalTicks: MEASURES*NOTES_PER_MEASURE*UNITS_PER_NOTE
     };
 
     if(noteData) {
