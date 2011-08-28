@@ -34,8 +34,6 @@ var ArrayModel = (function() {
         me.currentIndex++;
         me.currentIndex = me.currentIndex % me.numValues;
 
-		console.log('index: ' + me.currentIndex);
-
         if(oldIndex >= 0) {
           me.emit('tickremove', oldIndex, me.values[oldIndex], me.currentIndex);
         }
