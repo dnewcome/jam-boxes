@@ -58,7 +58,7 @@ var NotesBox = (function() {
 
         var node = note.node;
         // We pass the dataI and j so that we can set the model
-        $(note.node).bind('click', me.onNoteClick.bind(me, dataI, j));
+        $(note.node).bind('click', me.onNoteClick.bind(me, dataI, getNoteIndex(j)));
 
         me.trackEl(note);
         columnBoxes[dataI][j] = note;
@@ -67,6 +67,12 @@ var NotesBox = (function() {
 
   }
 
+
+
+
+  function getNoteIndex(value) {
+    return NOTES - value;
+  }
 
   var Box = function(config) {
     Shape.prototype.constructor.apply(this, arguments);
@@ -166,7 +172,7 @@ var NotesBox = (function() {
 
       if (columnBoxes) {
           columnBoxes.forEach(function(note, j) {
-            var selected = value === j;
+            var selected = getNoteIndex(value) === j;
             me.updateNoteDisplay(note, selected);
           });
       }
@@ -187,7 +193,7 @@ var NotesBox = (function() {
         }
 
         if ("undefined" !== typeof value && value !== null) {
-          var note = columnBoxes[value];
+          var note = columnBoxes[getNoteIndex(value)];
 
           if (note && (note.fill != SELECTED_COLOR)) {
             note.fill = SELECTED_COLOR;
@@ -213,7 +219,7 @@ var NotesBox = (function() {
         }
 
         if ("undefined" !== typeof value && value !== null) {
-          var note = columnBoxes[value];
+          var note = columnBoxes[getNoteIndex(value)];
 
           if (note.fill != SELECTED_COLOR_HIGHLIGHT) {
             note.fill = SELECTED_COLOR_HIGHLIGHT;
