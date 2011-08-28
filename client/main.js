@@ -155,7 +155,8 @@
 
     var network = new Network();
     network.on("userupdate", function(userData) {
-      var model = users[userData.userid];
+      var userid = userData.userid;
+      var model = users[userid];
       if(model) {
         // update model
         model.updateFromData(userData);
