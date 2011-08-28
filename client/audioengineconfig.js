@@ -2,7 +2,7 @@ var ae = new AudioEngine();
 
 var SAMPLES = [
   'bass',
-  'guitar'
+  'guitar',
   'snare'
 ];
 
