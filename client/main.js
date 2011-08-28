@@ -136,7 +136,7 @@
 
 
   function main() {
-    window.paper = Raphael('canvas', CANVAS_WIDTH, 600);
+    window.paper = Raphael('canvas', CANVAS_WIDTH, 700);
 
     var users = {};
 
