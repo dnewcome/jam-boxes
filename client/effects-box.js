@@ -9,7 +9,7 @@ function EffectsBoxRegistry() {
 effectsBoxRegistry = new EffectsBoxRegistry();
 
 // there is one EffectsData model per user, which keeps track of the effects values
-function EffectsData(ownerId, measures, notesPerMeasure, audioEngine) {
+function EffectsData(effectsData, ownerId, measures, notesPerMeasure, audioEngine) {
 	var that = this;
 
 	this.unitsPerNote = 8;
@@ -20,14 +20,16 @@ function EffectsData(ownerId, measures, notesPerMeasure, audioEngine) {
 
 	this.ownerId = ownerId;	// if owner is local user, ownerId = 0
 
-	this.values = [];	// each value is of the form [x, y], where x and y are between 0-1 inclusive
+	this.values = effectsData;	// each value is of the form [x, y], where x and y are between 0-1 inclusive
 
 	this.numValues = this.unitsPerNote*this.notesPerBox*this.numBoxes;
 	this.currentIndex = -1;	// this should be between 0 and (this.numValues-1) inclusive
 
-	for (var i=0; i<this.numValues; i++) {
-		this.values[i] = [0.5, 0.5];
-	}
+  if(!this.values.length) {
+    for (var i=0; i<this.numValues; i++) {
+      this.values[i] = [0.5, 0.5];
+    }
+  }
 
 	this.getValues = function(boxInd) {
 		if (boxInd < 0 || boxInd >= this.numBoxes) {

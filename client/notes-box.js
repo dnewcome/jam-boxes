@@ -92,7 +92,6 @@ var NotesBox = (function() {
           values = me.data.getValues(me.ind),
           len = values.length;
 
-
       for(var i = 0, value; i < len; ++i) {
         value = values[i];
 
