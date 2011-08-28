@@ -154,7 +154,16 @@
       }
     });
 
-    var userNotes = [];
+    var userNotes = [
+		1,null,null,null,
+		1,null,null,null,
+		1,null,null,null,
+		1,3,null,null,
+		1,null,null,null,
+		1,null,null,null,
+		1,null,null,null,
+		1,5,null,null
+	];
     var effectsData = [];
 
 	  // this is global... FIXME
