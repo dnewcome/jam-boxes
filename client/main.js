@@ -14,7 +14,8 @@
   function createNotesModel(ownerId, noteData) {
     var noteModelConfig = {
       ownerId: ownerId,
-      copySize: NOTES_PER_MEASURE
+      copySize: NOTES_PER_MEASURE,
+      timer: ae
     };
 
     if(noteData) {
