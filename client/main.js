@@ -250,9 +250,14 @@ if (!Function.prototype.bind) {
   }
 
 
-  if(!$.browser.mozilla) {
+  if($.browser.ie && parseInt($.browser.version, 10) < 10) {
+    $('#ieSupport').show();
+    return;
+  }
+  else if(!$.browser.mozilla) {
     $('#noSupport').show();
   }
+
   $(main);
 
 }());
